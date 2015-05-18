@@ -1,0 +1,2 @@
+[05-May-2015 02:56:25 UTC] PHP Fatal error:  Call to undefined method PDF_Invoice::AddTitle() in /home/efrenovations/public_html/Login/invoices/Data/generatepdf.php on line 44
+[05-May-2015 03:06:33 UTC] PHP Fatal error:  Class 'PDF_Invoice' not found in /home/efrenovations/public_html/Login/invoices/Data/generatepdf.php on line 25

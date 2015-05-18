@@ -1,0 +1,3 @@
+	RewriteEngine On
+    RewriteRule ^Data/generatepdf/([a-zA-Z0-9]*) Data/generatepdf.php?$1 [QSA,L]
+	
