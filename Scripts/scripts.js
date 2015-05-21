@@ -11,6 +11,51 @@ $(document).ready(function() {
 	GetCustomerList();
  
  
+ $(document).on("click",".deleteimage",function(){
+	 
+	 var imageid = $(this).attr("data-image-id");
+	 var remove = $(this).parent();
+	 var invoiceid = $(this).attr('data-invoice-id');
+	 $("#customloader").show();
+	 $.ajax({
+
+		type : "GET",
+		cache : false,
+		url : "Data/Delete.php",
+		data : {
+			ImageID : imageid,
+			ImageName: $(this).parent().find(".itemimage").attr('src')
+		}
+	}).done(function(data) {
+		alert(data);
+		LoadInvoiceImages(invoiceid,false);
+	  $("#customloader").hide();
+	});
+	 
+	 
+ });
+ 
+	$(document).on("click",".addviewimages",function(){
+		
+		var invoiceid= $(this).attr("data-invoice-id");//imagessection
+		
+		if($("#invoiceimagecontainer > ul").children().length == 0){
+			
+			
+			//load images
+			LoadInvoiceImages(invoiceid,true);
+			
+			//alert('no pics');
+			
+		}else{
+			
+			$(".imagessection[data-invoice-id='"+invoiceid+"']").slideToggle();
+			//alert('some pics');
+			
+		}
+		
+		
+	});
  
     $(document).on("click",".customerrowheader .rowitem",function(){
         
@@ -794,18 +839,47 @@ function GetSavedInvoices(date) {
 		var invoices = JSON.parse(data);
 		var savedtotals = 0.00;
 		if (invoices != "") {
-
+		
 			jQuery.each(invoices, function() {
-
+			
 				var title = '';
 			 
 				if(this.title!=''){title = "&nbsp;-&nbsp;"+this.title;}
 			
-				$(".invoicesaved").append('<div class="invoicerow"><div class="innerrow"><div style="text-align:center;width:100%!important" class="innercolumn"><span class="invoiceheader">Estimate ID - #&nbsp;</span><span class="rowinvoiceid" style="font-weight:bold">' + this.invoiceID + '</span>'+title+'</div><div class="innercolumn"><span class="invoiceheader">Name</span>&nbsp;<span class="invoicerowname"  style="font-weight:bold">' + this.clientname + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Address</span>&nbsp;' + this.clientstreetaddress + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Location</span>&nbsp;' + this.clientcitystatezip + '</div>' + '<div  class="innercolumn"><span class="invoiceheader">Invoice Total</span>&nbsp;<span class="invoicerowtotal" data-val="' + this.invoicetotal + '" style="color:green;font-weight:bold">$&nbsp;' + this.invoicetotal + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Email</span>&nbsp;<span class="invoicerowemail">' + this.clientemail + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Create Date</span>&nbsp;' + this.createddate + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Expires</span>&nbsp;' + this.expirationdate + '</div>' + '<div  class="innercolumn"><a target="_blank" href="Data/generatepdf/' + btoa("invoiceID=" + this.invoiceID) + '">View</a> | <span data-invoice-id="' + this.invoiceID + '" class ="link loadinvoice">Load</span> | <span data-invoice-id="' + this.invoiceID + '" class="link sendsavedinvoice">Send</span> | <span data-invoice-id="' + this.invoiceID + '" class="link deleteinvoice">Delete</span></div>' + '</div></div>');
+				$(".invoicesaved").append('<div class="invoicerow"><div class="innerrow"><div style="text-align:center;width:100%!important" class="innercolumn"><span class="invoiceheader">Estimate ID - #&nbsp;</span><span class="rowinvoiceid" style="font-weight:bold">' + this.invoiceID + '</span>'+title+'</div><div class="innercolumn"><span class="invoiceheader">Name</span>&nbsp;<span class="invoicerowname"  style="font-weight:bold">' + this.clientname + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Address</span>&nbsp;' + this.clientstreetaddress + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Location</span>&nbsp;' + this.clientcitystatezip + '</div>' + '<div  class="innercolumn"><span class="invoiceheader">Invoice Total</span>&nbsp;<span class="invoicerowtotal" data-val="' + this.invoicetotal + '" style="color:green;font-weight:bold">$&nbsp;' + this.invoicetotal + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Email</span>&nbsp;<span class="invoicerowemail">' + this.clientemail + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Create Date</span>&nbsp;' + this.createddate + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Expires</span>&nbsp;' + this.expirationdate + '</div>' + '<div  class="innercolumn"><a target="_blank" href="Data/generatepdf/' + btoa("invoiceID=" + this.invoiceID) + '">View</a> | <span data-invoice-id="' + this.invoiceID + '" class ="link loadinvoice">Load</span> | <span data-invoice-id="'+this.invoiceID+'" class="link addviewimages blue">Add/View Images</span> | <span data-invoice-id="' + this.invoiceID + '" class="link sendsavedinvoice">Send</span> | <span data-invoice-id="' + this.invoiceID + '" class="link deleteinvoice">Delete</span></div>'
+				+ '<div style="clear:both"></div>'
+				 
+				+ '<div class="imagessection" data-invoice-id='+this.invoiceID+'>'
+			
+				+ '<div id="fileuploader'+this.invoiceID+'">Upload</div>'
+				
+				+ '<div id="invoiceimagecontainer"><ul class="row"></ul></div>'
+				
+				+ '</div>'
+				
+				+ '</div></div>');
 				savedtotals += Number(this.invoicetotal);
+				
+				
+	$("#fileuploader"+this.invoiceID).uploadFile({
+	url:"Data/UploadImageMobile.php",
+	fileName:"myfile",
+	multiple:true,
+	formData:{InvoiceID: this.invoiceID},
+	onSuccess:function(files,data,xhr)
+	{
+	
+	LoadInvoiceImages(data);
+	$(".ajax-file-upload-statusbar").hide();
+	}
+	});
+	
+				
 			});
 
 			$(".savedinvoicetotal").html(savedtotals.toFixed(2));
+			
+
 
 		} else {
 
@@ -2168,6 +2242,42 @@ function enableCustomerFields(){
 		//$("input[name='clienttitle']").prop("disabled",false);
     
 }
+
+function LoadInvoiceImages(invoiceID,slide){
+	
+	
+//load invoice pics
+$.ajax({
+
+		type : "GET",
+		cache : false,
+		url : "Data/DataModel.php",
+		data : {
+			
+			GetInvoiceImages:true,
+			InvoiceID:invoiceID
+		}
+	}).done(function(data) {
+
+		var jsondata = JSON.parse(data);
+        
+		$("#invoiceimagecontainer .row").empty();
+
+		jQuery.each(jsondata,function(){
+			
+			$("#invoiceimagecontainer .row").append("<li class='col-lg-2 col-md-3 col-sm-6 col-xs-12'><div class='ProjectsImageHolder' data-ajax-id='"+this.ID+"'><img class='itemimage' src='"+this.link+"'/><a href='#' onclick='return false;' class='deleteimage' data-invoice-id='"+invoiceID+"' id='deleteimage' data-image-id='"+this.ID+"'>Delete</a><br/><a class='directionarrows' id='verticalflip' data-direction='Vertical' href='#' onclick='return false;' data-image-id='"+this.ID+"'>↕</a>&nbsp;&nbsp;<a class='directionarrows' id='horizontalflip' data-direction='Horizontal' href='#' onclick='return false;' data-imageid='"+this.ID+"'>↔</a></div></li>");
+			
+			
+		});
+
+		if(slide){
+		$(".imagessection[data-invoice-id='"+invoiceID+"']").slideToggle();
+		}
+		
+	});
+	
+}
+
 
 function sortCustomers(order,ascdes,parent) {
 
