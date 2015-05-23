@@ -9,7 +9,7 @@ include('DataModel.php');
 
 //}
 
-$output_dir  = "../Images/Invoices/";
+$output_dir  = "../images/Invoices/";
 
 if(isset($_FILES["myfile"])){
 
