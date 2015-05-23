@@ -7,9 +7,13 @@ font-family: 'Open Sans', sans-serif!important;
 
 }
 
+textarea{
+resize:none;
+}
+
 a:active{text-decoration:none;}
 a {text-decoration:none;}
-a:hover{text-decoration:none;}
+a:hover{text-decoration:none;cursor:pointer;}
 a:visited{text-decoration:none;}
 
 
@@ -205,6 +209,8 @@ float: left;
 
 @media (min-width:401px){	
 
+
+
 .customers{
 
 display:inline-block; margin-top:-10px;display:none;word-break:break-all;
@@ -256,6 +262,19 @@ background-color:#FAFAFA;
 }
 
 @media (max-width:400px){
+
+
+.itemtitle{
+
+text-align:left;width:100%!important
+
+}
+
+#buildingandspecs{
+
+width:100%;
+
+}
 
 .customers{
 
@@ -381,7 +400,7 @@ background-color:lightgray;
     
 }
 
-.additem, .removerow,.addinvoiceitem,.savelink,.removeitem,.invoiceheader,.resendinvoice,.sendsavedinvoice,.loadinvoice,.payinvoice,.deleteinvoice,.viewcustomer{
+.additem, .removerow,.addinvoiceitem,.savelink,.removeitem,.invoiceheader,.resendinvoice,.sendsavedinvoice,.loadinvoice,.payinvoice,.deleteinvoice,.viewcustomer,.addstep,.blue{
 
 color:#428bca;
 }
@@ -922,6 +941,12 @@ display:none;
 @media(min-width:768px) {
 	
 	
+	.itemtitle{
+
+text-align:center;width:100%!important
+
+}
+	
 .MobileMenu{
 
 display:none;
@@ -1051,3 +1076,12 @@ cursor:pointer;
 word-wrap: break-word;
 
 }
+
+#contractinfo{
+
+margin-top:20px;
+display:none;
+
+}
+
+

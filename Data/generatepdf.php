@@ -15,6 +15,7 @@ $invoiceID = $querysrings["invoiceID"];
 $settings = GetSettingsArray();
 $client = GetInvoice($invoiceID,"false");
 $LineItems = GetLineItems($invoiceID,"false");
+$PaymentSchedule = GetSteps($invoiceID,"false");
 
 	 
 $itemcolumn = "ITEM";
@@ -72,7 +73,7 @@ $cols=array( $itemcolumn    => "L",
 $pdf->addLineFormat($cols);
 $pdf->addLineFormat($cols);
 
-$y    = 85;
+$y = 85;
 
 $itemsarray = array();
 
@@ -95,6 +96,22 @@ $tot_prods = $itemsarray;
 					
 $pdf->addTotalsFormatting();
 $pdf->addTVAs($tot_prods);
+
+if($client["attachcontract"]){
+	
+	if($client["paid"]=="1"){
+
+	$date = strtotime($client["paiddate"]);
+	
+}else{
+	
+    $date = strtotime($client["createddate"]);
+}
+	
+	$pdf->AddContract($settings,$client,date("m-d-y",$date),$PaymentSchedule);
+	
+}
+
 $pdf->Output();
  }else{
 	 

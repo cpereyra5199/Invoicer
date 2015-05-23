@@ -2,13 +2,12 @@
     session_start();
 }
 
-if(!isset($_SESSION['user'])){
+//uncomment when putting on server!!
+//if(!isset($_SESSION['user'])){
 	
-header("Location: ../../Login");
-
-
+//header("Location: ../../Login");
 	
-}
+//}
 
 
 ?>
@@ -153,8 +152,33 @@ header("Location: ../../Login");
 <input type="text" name="clientcitystate" placeholder="Client City, State"/>
 <input type="text" name="clientzipcode" onkeypress="return isNumber(event)" maxlength="10" placeholder="Client Zip Code"/>
 <input type="text" name="expirationdays" onkeypress="return isNumber(event)" placeholder="Expires in x days"/>
-<div class="createcopydiv" style="display:none"><span>Create Copy</span><input type="checkbox" class="createinvoicecopy" /></div>
+<div>
+<span>Attach Contract</span>
+<input type="checkbox" id="attachcontract" class="attachcontract" / >
+<input type="hidden" class="hidden" name="attachcontractvalue"/>
+
+<div class="createcopydiv" style="display:none"><span>&nbsp | Create Copy</span><input type="checkbox" class="createinvoicecopy" /></div>
 <input type="hidden" name="taxrate" />
+</div>
+
+<div id="contractinfo">
+
+<span>Building & Specifications</span>
+<br/>
+<textarea cols="50" id="buildingandspecs" name="buildingandspecs" rows="10"></textarea>
+<br/><br/>
+<span>Payment Schedule</span>
+<br/>
+<span class="link addstep">Add Item</span>
+<br/>
+
+<div id="stepscontainer">
+
+</div>
+
+
+</div>
+
 <hr/>
 
 <div class="itemscontainer">

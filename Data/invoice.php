@@ -136,6 +136,225 @@ function sizeOfText( $texte, $largeur )
     return $nb_lines;
 }
 
+function AddContract($settings,$client,$date,$PaymentSchedule){
+	
+	$this->AddPage();
+	
+	//$x1=10;
+	//$y1=6;
+	
+	
+	$this->SetFont('Arial','B',18);
+	
+	
+	$length = $this->GetStringWidth($settings["companyname"]);
+	$x = ($this->w/2)-($length/2);
+	$y = 15;
+
+
+	$this->SetXY($x,$y);
+
+	$this->Cell($length,2,$settings["companyname"]);
+	
+	//
+	
+	$this->SetFont('Arial','B',8);
+	
+	$length = $this->GetStringWidth("404 409 3715");
+	$x = ($this->w/2)-($length/2);
+	
+	$y=$y+8;
+	
+	$this->SetXY($x,$y);
+	
+	$this->Cell($length,2,"404 409 3715");
+	
+	
+	//
+	
+	$this->SetFont('Arial','B',10);
+	
+	$length = $this->GetStringWidth("CONTRACT AGREEMENT");
+	$x = ($this->w/2)-($length/2);
+	
+	$y=$y+15;
+	
+	$this->SetXY($x,$y);
+
+	$this->Cell($length,2,"CONTRACT AGREEMENT");
+	
+	$x1=10;
+	$y1=$y+15;
+	
+	$this->SetXY($x1,$y1);
+	
+	$this->SetFont('Arial','',11);
+	
+	$txt = "Date:  ".$date."\n\n".
+		   $client["clientname"]."\n".$client["clientemail"]."\n".$client["clientstreetaddress"]."\n".$client["clientcitystate"]."\n".$client["clientzip"].
+		   "\n\n".
+		   "JOB TITLE:  ".$client["invoicetitle"].
+		   "\n\n".
+		   "Article One: Contract Document";
+		   
+		   $this->MultiCell(190,6, $txt);
+		   
+		   
+	$txt="\nThese documents constitute an agreement between ".$settings["companyname"]." hereinafter referred to as the \"Contractor\" and ".
+	$client["clientname"]." hereinafter referred to as the \"Owner\", to renovate the project located at ".$client["clientstreetaddress"]." ".$client["clientcitystate"]." ".
+	$client["clientzip"]."\n\nThe contract documents consists of this agreement, general conditions, construction documents, specifications, allowances, finish schedule, construction draw schedule,".
+		   " addenda issued prior to by both parties.\n\n";
+		   
+	$this->SetX(25);   
+	
+	$this->MultiCell(165,6, $txt);
+	
+	$this->SetX($x1);
+	
+	$txt= "The Contractor shall provide all documents noted herein to the Owner.  These contract documents represent the entire agreement of both parties and supersede any prior oral or written agreement.";
+		   
+	$this->MultiCell(190,6, $txt);
+	
+	$txt = "\n\nArticle Two: Duties of the Contractor"."\n";
+	
+	$this->MultiCell(190,6, $txt);
+	
+	$this->SetX(25);  
+	
+	$txt = "\nAll work shall be in concordance to the provisions of the plans and specification.  All systems shall be in good working order.\n\n".
+			"All work completed in a competent manner, and shall comply with all applicable national, state, and local building codes and laws.\n\n".
+			"All individuals will perform their said work as outlined by law.\n\n".
+			"Contractor shall remove all construction debris and leave the project in a broom clean conditions.";
+	
+	$this->MultiCell(165,6, $txt);
+	
+	$txt = "\n\nArticle Three: Owner"."\n";
+	
+	$this->SetX($x1);
+	
+	$this->MultiCell(190,6, $txt);
+	
+	$txt = "\nThe Owner shall communicate with subcontractors only through the Contractor.\n\n".
+			"The Owner will not assume any liability or responsibility, nor control over or change of construction means, methods, techniques, sequences, procedures, or for safety precautions ".
+			"and programs in connection with the project since these are solely the Contractor's responsibility.";
+	
+	$this->SetX(25);  		
+	
+	$this->MultiCell(165,6, $txt);
+	
+	$txt = "\n\nArticle Four: Change Order and Finish Schedules"."\n\n";
+	
+	$this->SetX($x1);
+	
+	$this->MultiCell(190,6, $txt);
+	
+	$txt="A Change Order is any charge to the original contracted plans and/or specifications.\n\n".
+		 "All change orders to be administered through direct contact between the Owner and the Contractor.\n\n".
+		 "Any additional time needed to complete change order is into consideration in the project completion date.";
+		 
+	$this->SetX(25);  
+	$this->MultiCell(165,6, $txt);
+	
+	$this->SetX($x1);
+	
+	$txt = "\nAny delays or changes in finish selection schedules may delay the projected completion date.\nContractor's Initials ____";
+	$this->MultiCell(190,6, $txt);
+	
+	$txt = "\n\nArticle Five: Building & Specifications"."\n\n";
+	
+	$this->SetX($x1);
+	$this->MultiCell(190,6, $txt);
+	
+	$this->SetX(25);  
+	$this->MultiCell(165,6,$client["buildingandspecs"]);
+
+	
+	$txt = "\n\nArticle Six: Progress Payments.\n\n";
+	$this->SetX($x1);
+	$this->MultiCell(190,6, $txt);
+	
+	$txt = "The owner will make payments to the contractor pursuant to the construction draw schedule as each phase of the construction schedule is satisfactorily complete\n\n";
+	
+	$this->SetX(25);  
+	$this->MultiCell(165,6,$txt);
+	
+	$this->AddPage();
+	
+	$txt= "Payment schedule:\n\n";
+	
+	$this->SetX($x1);
+	$this->MultiCell(190,6, $txt);
+	
+	$total=0;
+	
+	foreach($PaymentSchedule as $line => $item){
+		
+		$txt = $item["name"]."\n".$item["description"]."\n$".$item["value"]."\n\n";
+		$this->MultiCell(190,6, $txt);
+		
+		$total+=$item["value"];
+		
+	}
+	
+	$txt = "Total - $".$total;
+	
+	$this->MultiCell(190,6, $txt);
+	
+	$txt = "\nDraw payments are made payable to ".$settings["companyname"];
+	
+	$this->MultiCell(190,6, $txt);
+	
+	$txt = "\n\nArticle Seven: Warranty.\n\n";
+	
+	$this->MultiCell(190,6, $txt);
+	
+	$txt = "At the completion of the project, contractor shall execute an instrument to owner warranting the project for one year against defects in workmanship or materials utilized.\n\n\n\n\n\n\n\n\n";
+	
+	$this->SetX(25);  
+	$this->MultiCell(165,6,$txt);
+	
+	$txt = "________________________________________ ";
+	
+	
+	$length = $this->GetStringWidth( $txt );
+    $this->SetX($x1);
+	$this->Cell($length,2,$txt);
+	
+	$txt = "Ernesto Figueroa";
+	
+	$length = $this->GetStringWidth( $txt );
+    $this->SetX($x1);
+	$this->SetY($this->y+5);
+	$this->Cell($length,2,$txt);
+	
+	
+	$txt = "Date";
+	
+	$length = $this->GetStringWidth( $txt );
+	$this->SetXY(85,$this->y);
+	$this->Cell($length,2,$txt);
+	
+	$txt = "________________________________________ ";
+	
+	$length = $this->GetStringWidth( $txt );
+    $this->SetXY($x1,$this->y+20);
+	$this->Cell($length,2,$txt);
+	
+	$txt=$client["clientname"];
+	
+	$length = $this->GetStringWidth( $txt );
+    $this->SetX($x1);
+	$this->SetY($this->y+5);
+	$this->Cell($length,2,$txt);
+	
+	$txt = "Date";
+	
+	$length = $this->GetStringWidth( $txt );
+	$this->SetXY(85,$this->y);
+	$this->Cell($length,2,$txt);
+	
+}
+
 function AddLogo($url){
 
 
