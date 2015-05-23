@@ -6,10 +6,6 @@
  * @license Free
  */
 
-//if(!isset($_SESSION['user']))      // if there is no valid session
-//{
-  //  header("Location: Login/");
-//}
 class ImageManipulation {
  
     /**

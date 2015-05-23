@@ -1,15 +1,18 @@
 <?php
 
-//add code here to check if invoice is expired
+if(!isset($_SESSION)){
+    session_start();
+}
+
+if(!isset($_SESSION['user'])){
+	
+header("Location: ../../Login");
+
+}
 
 require('invoice.php');
 require('DataModel.php');
 
-//if(!isset($_SESSION['user'])){
-	
-//header("Location: ../../Login");
-
-//}
 
 $querystring = base64_decode($_SERVER['QUERY_STRING']);
 

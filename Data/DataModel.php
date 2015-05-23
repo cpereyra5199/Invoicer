@@ -1,5 +1,16 @@
 <?php
 
+
+if(!isset($_SESSION)){
+    session_start();
+}
+
+if(!isset($_SESSION['user'])){
+	
+header("Location: ../../Login");
+
+}
+
 require_once("sendmail.php");
 
 $hostname = "localhost";
@@ -7,11 +18,7 @@ $username = "invoicemanager";
 $password = "Maxipereyra!2";
 $dbname = "invoicemanagement";
 
-//if(!isset($_SESSION['user'])){
-	
-//header("Location: ../../Login");
 
-//}
 
 if (isset($_GET["GetCategories"])) {
 
