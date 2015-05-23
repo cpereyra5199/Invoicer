@@ -5,9 +5,6 @@
 require('invoice.php');
 require('DataModel.php');
 
-if(!isset($_SESSION['user'])){
-header("Location: ../../Login");
-}
 
 $querystring = base64_decode($_SERVER['QUERY_STRING']);
 
