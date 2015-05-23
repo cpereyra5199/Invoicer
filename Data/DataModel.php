@@ -7,6 +7,11 @@ $username = "invoicemanager";
 $password = "Maxipereyra!2";
 $dbname = "invoicemanagement";
 
+//if(!isset($_SESSION['user'])){
+	
+//header("Location: ../../Login");
+
+//}
 
 if (isset($_GET["GetCategories"])) {
 

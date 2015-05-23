@@ -2,6 +2,12 @@
 
 include('DataModel.php');
 
+//if(!isset($_SESSION['user'])){
+	
+//header("Location: ../../Login");
+
+//}
+
 $imageid = $_GET["ImageID"];
 $imagename = $_GET["ImageName"];
 

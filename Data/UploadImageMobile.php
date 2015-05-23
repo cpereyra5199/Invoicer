@@ -3,6 +3,12 @@
 include('ResizeClass.php');
 include('DataModel.php');
 
+//if(!isset($_SESSION['user'])){
+	
+//header("Location: ../../Login");
+
+//}
+
 $output_dir  = "../Images/Invoices/";
 
 if(isset($_FILES["myfile"])){
