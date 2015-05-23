@@ -1100,6 +1100,23 @@ function GetStepsIDs($invoiceID){
 	return $itemids;
 	
 }
+function GetImagesForInvoice($invoiceID){
+	
+	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+	
+	$query = "SELECT ImageName FROM `invoiceimages` where InvoiceID=" . $invoiceID;
+	$result = mysql_query($query);
+	$images = array();
+	while ($row = mysql_fetch_array($result)) {
+
+		array_push($images, "../".$row["ImageName"]);
+
+	}
+	
+	return $images;
+	}
+
 
 
 

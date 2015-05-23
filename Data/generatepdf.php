@@ -16,7 +16,7 @@ $settings = GetSettingsArray();
 $client = GetInvoice($invoiceID,"false");
 $LineItems = GetLineItems($invoiceID,"false");
 $PaymentSchedule = GetSteps($invoiceID,"false");
-
+$images = GetImagesForInvoice($invoiceID);
 	 
 $itemcolumn = "ITEM";
 $itemdescription="DESCRIPTION";
@@ -96,7 +96,6 @@ $tot_prods = $itemsarray;
 					
 $pdf->addTotalsFormatting();
 $pdf->addTVAs($tot_prods);
-
 if($client["attachcontract"]){
 	
 	if($client["paid"]=="1"){
@@ -111,6 +110,9 @@ if($client["attachcontract"]){
 	$pdf->AddContract($settings,$client,date("m-d-y",$date),$PaymentSchedule);
 	
 }
+
+$pdf->AddImages($images);
+
 
 $pdf->Output();
  }else{

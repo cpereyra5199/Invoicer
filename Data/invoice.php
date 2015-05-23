@@ -365,6 +365,36 @@ $this->Image($url,$x1,$y1,40,25);
 
 }
 
+function AddImages($images){
+	
+	$x1=10;
+	$y1=10;
+	
+	$this->AddPage();
+	$count=0;
+	foreach ($images as &$image){
+		
+	if($count > 1){
+		
+		$this->AddPage();
+		$count=0;
+		$y1=10;
+	}
+		
+	list($width, $height) = getimagesize($image);
+	
+	$this->Image($image,$x1,$y1,191,123);
+	
+	$y1=140;	
+	
+	$count=$count+1;
+	
+		
+	}
+	
+	
+}
+
 // Company
 function AddCompany( $name, $address )
 {
