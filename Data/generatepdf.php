@@ -15,7 +15,7 @@ $invoiceID = $querysrings["invoiceID"];
 $settings = GetSettingsArray();
 $client = GetInvoice($invoiceID,"false");
 $LineItems = GetLineItems($invoiceID,"false");
-
+$images = GetImagesForInvoice($invoiceID);
 	 
 $itemcolumn = "ITEM";
 $itemdescription="DESCRIPTION";
@@ -95,6 +95,9 @@ $tot_prods = $itemsarray;
 					
 $pdf->addTotalsFormatting();
 $pdf->addTVAs($tot_prods);
+
+$pdf->AddImages($images);
+
 $pdf->Output();
  }else{
 	 
