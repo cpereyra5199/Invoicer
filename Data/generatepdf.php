@@ -111,8 +111,10 @@ if($client["attachcontract"]){
 	
 }
 
+//if there are images add them to pdf
+if(count($images)>0){
 $pdf->AddImages($images);
-
+ }
 
 $pdf->Output();
  }else{

@@ -3,7 +3,7 @@
 include('ResizeClass.php');
 include('DataModel.php');
 
-$output_dir  = "../Images/";
+$output_dir  = "../Images/Invoices/";
 
 if(isset($_FILES["myfile"])){
 

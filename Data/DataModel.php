@@ -1117,7 +1117,4 @@ function GetImagesForInvoice($invoiceID){
 	return $images;
 	}
 
-
-
-
 ?>

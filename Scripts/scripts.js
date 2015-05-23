@@ -10,6 +10,43 @@ $(document).ready(function() {
     GetMonthDataTransaction();
 	GetCustomerList();
  
+ $(document).on('click','.directionarrows',function(){
+	 
+	 var arrow = $(this);
+	 
+	 var img = $(this).parent().find("img");
+	 
+	 var direction = $(this).attr("data-direction");
+	 
+	 var imagename = $(this).attr("data-imagename");
+	 
+	 var imageid = $(this).attr("data-imageid");
+	 
+	 $("#customloader").show();
+	 
+	 $.ajax({
+		 type:"GET",
+		 cache: 0,
+		 url:"Data/Flip.php",
+		 data : {
+			 
+			 ImageID: imageid,
+			 ImageName: imagename,
+			 Direction: direction
+			 
+		 }
+	 }).done(function(e){
+		 
+		 d = new Date();
+		 img.attr("src", img.attr('src')+"?"+d.getTime());
+		 $("#customloader").hide();
+		 
+	 });
+	 
+ });
+ 
+ 
+ 
  $(document).on("click",".addstep",function(){
 	 
 	 AddStepsRow();
@@ -107,7 +144,7 @@ $(document).ready(function() {
     
     $(document).on("click",".deleteinvoice",function(){
         
-        
+        $("html, body").animate({ scrollTop: 0 }, "slow");
         var invoiceid = $(this).attr("data-invoice-id");
         
         
@@ -2362,7 +2399,7 @@ $.ajax({
 
 		jQuery.each(jsondata,function(){
 			
-			$("#invoiceimagecontainer .row").append("<li class='col-lg-2 col-md-3 col-sm-6 col-xs-12'><div class='ProjectsImageHolder' data-ajax-id='"+this.ID+"'><img class='itemimage' src='"+this.link+"'/><a href='#' onclick='return false;' class='deleteimage' data-invoice-id='"+invoiceID+"' id='deleteimage' data-image-id='"+this.ID+"'>Delete</a><br/><a class='directionarrows' id='verticalflip' data-direction='Vertical' href='#' onclick='return false;' data-image-id='"+this.ID+"'>↕</a>&nbsp;&nbsp;<a class='directionarrows' id='horizontalflip' data-direction='Horizontal' href='#' onclick='return false;' data-imageid='"+this.ID+"'>↔</a></div></li>");
+			$("#invoiceimagecontainer .row").append("<li class='col-lg-2 col-md-3 col-sm-6 col-xs-12'><div class='ProjectsImageHolder' data-ajax-id='"+this.ID+"'><img class='itemimage' src='"+this.link+"'/><a href='#' onclick='return false;' class='deleteimage' data-invoice-id='"+invoiceID+"' id='deleteimage' data-image-id='"+this.ID+"'>Delete</a><br/><a class='directionarrows' id='verticalflip' data-direction='Vertical' href='#' onclick='return false;' data-imagename='"+this.link+"' data-image-id='"+this.ID+"'>↕</a>&nbsp;&nbsp;<a class='directionarrows' id='horizontalflip' data-imagename='"+this.link+"' data-direction='Horizontal' href='#' onclick='return false;' data-imageid='"+this.ID+"'>↔</a></div></li>");
 			
 			
 		});
