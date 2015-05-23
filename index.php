@@ -2,6 +2,13 @@
     session_start();
 }
 
+if(!isset($_SESSION['user'])){
+	
+header("Location: ../../Login");
+
+
+	
+}
 
 
 ?>
@@ -21,7 +28,6 @@
 <script src="Scripts/scripts.js"></script>
 <script src="Scripts/jquery.paulund_modal_box.js"></script>
 <link rel="stylesheet" type="text/css" href="CSS/style.css" media="screen" />
-<link rel="stylesheet" type="text/css" href="CSS/uploadfile.min.css" media="screen" />
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
 
