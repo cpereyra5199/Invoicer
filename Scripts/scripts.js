@@ -27,7 +27,6 @@ $(document).ready(function() {
 			ImageName: $(this).parent().find(".itemimage").attr('src')
 		}
 	}).done(function(data) {
-		alert(data);
 		LoadInvoiceImages(invoiceid,false);
 	  $("#customloader").hide();
 	});
