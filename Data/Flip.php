@@ -3,10 +3,10 @@
 if(!isset($_SESSION)){
     session_start();
 }
-//if(!isset($_SESSION['user']))      // if there is no valid session
-//{
-  //  header("Location: Login/");
-//}
+if(!isset($_SESSION['user']))      // if there is no valid session
+{
+  header("Location: Login/");
+}
 include('ImageFlip.php');
 include('DataModel.php');
 

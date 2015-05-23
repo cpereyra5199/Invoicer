@@ -3,9 +3,9 @@
 }
 
 //uncomment when putting on server!!
-//if(!isset($_SESSION['user'])){
-//header("Location: ../../Login");
-//}
+if(!isset($_SESSION['user'])){
+header("Location: ../../Login");
+}
 
 
 ?>

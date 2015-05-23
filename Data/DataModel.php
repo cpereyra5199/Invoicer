@@ -2,6 +2,10 @@
 
 require_once("sendmail.php");
 
+if(!isset($_SESSION['user'])){
+header("Location: ../../Login");
+}
+
 $hostname = "localhost";
 $username = "invoicemanager";
 $password = "Maxipereyra!2";
