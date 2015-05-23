@@ -7,7 +7,7 @@ if(!isset($_SESSION['user'])){
 header("Location: ../../Login");
 }
 
-$output_dir  = "../Images/Invoices/";
+$output_dir  = "../images/Invoices/";
 
 if(isset($_FILES["myfile"])){
 
