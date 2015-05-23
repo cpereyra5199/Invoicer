@@ -28,7 +28,13 @@ if (isset($_GET["GetCategories"])) {
 
 	SaveSettings($_POST["SettingsFormValues"]);
 	
-} else if (isset($_GET["GetSettings"])) {
+} else if (isset($_GET["GetInvoiceImages"])){
+	
+    LoadInvoiceImages($_GET["InvoiceID"]);	
+	
+}
+
+else if (isset($_GET["GetSettings"])) {
 
 	GetSettingsJSON();
 
@@ -134,6 +140,44 @@ function DeleteInvoice($invoiceID){
     $result = mysql_query($query);
     
     
+}
+
+function LoadInvoiceImages($invoiceid){
+	
+	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+	
+	$query = "select ID,ImageName from `invoiceimages` where InvoiceID=".$invoiceid;
+	$result = mysql_query($query);
+	
+	$stack = array();  
+	
+	while ($row = mysql_fetch_array($result)) { 
+	
+	$arr = array(
+		
+		"ID" => $row["ID"],
+		"link" => $row["ImageName"]);
+        
+        array_push($stack, $arr);
+	
+	}
+	
+	 echo(json_encode($stack));  
+}
+
+function InsertImage($invoiceID,$imagename){
+	
+	//Connecting to your database
+    mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+
+//Fetching from your database table.
+$query = "insert into invoiceimages (InvoiceID,ImageName) values('".$invoiceID."','".$imagename."')";
+
+mysql_query($query);
+	
+	
 }
 
 function GetCustomerInvoicesByID($customerid){
