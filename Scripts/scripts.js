@@ -37,8 +37,14 @@ $(document).ready(function() {
 		 }
 	 }).done(function(e){
 		 
-		 d = new Date();
-		 img.attr("src", img.attr('src')+"?"+d.getTime());
+		 if(direction == "Vertical")
+			 img.toggleClass('flippedvertical');
+		 
+		 if(direction == "Horizontal")
+			 img.toggleClass("flippedhorizontal");
+		 //d = new Date();
+		 //img.attr("src", img.attr('src')+"?"+d.getTime());
+		 
 		 $("#customloader").hide();
 		 
 	 });
