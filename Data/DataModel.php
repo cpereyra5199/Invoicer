@@ -77,6 +77,11 @@ else if (isset($_GET["GetHomPageData"])){
 	
 	GetHomePageData($date);
 	
+} else if (isset($_GET["GetSteps"]) && isset($_GET["InvoiceID"])) {
+	
+	GetSteps($_GET["InvoiceID"],"true");
+	
+	
 }else if (isset($_GET["GetItemSettings"])){
 	
 	
@@ -534,7 +539,7 @@ function GetInvoice($invoiceID, $returnjason) {
 
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
-	$query = "select SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount,Paid,PaidDate,EmailSent, i.InvoiceTitle, i.ID,Name, StreetAddress,CityState as ClientCityState,ZipCode,Email, DateTime, ExpirationDate,CustomerID from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID inner join `customer` c on c.ID = i.CustomerID  where i.ID=".$invoiceID." GROUP BY i.ID";
+	$query = "select BuildingandSpecs,AttachContract,SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount,Paid,PaidDate,EmailSent, i.InvoiceTitle, i.ID,Name, StreetAddress,CityState as ClientCityState,ZipCode,Email, DateTime, ExpirationDate,CustomerID from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID inner join `customer` c on c.ID = i.CustomerID  where i.ID=".$invoiceID." GROUP BY i.ID";
 
 	$result = mysql_query($query);
     
@@ -561,8 +566,10 @@ function GetInvoice($invoiceID, $returnjason) {
 	    "invoiceID" => $row["ID"],
 	    "totalamount"=>$row["TotalAmount"],
 		"customerid"=>$row["CustomerID"],
+		"attachcontract" =>$row["AttachContract"],
 	    "expirationdatecount" => $interval -> format("%a"),
-		"invoicetitle" => $row["InvoiceTitle"]);
+		"invoicetitle" => $row["InvoiceTitle"],
+		"buildingandspecs" => $row["BuildingandSpecs"]);
 
 	}
 
@@ -574,6 +581,33 @@ function GetInvoice($invoiceID, $returnjason) {
 
 		return $arr;
 	}
+}
+
+function GetSteps($invoiceID,$returnjason){
+	
+	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+
+	$query = "select * from `contractsteps` where InvoiceID=" . $invoiceID;
+	
+	$result = mysql_query($query);
+	$stack = array();
+	while ($row = mysql_fetch_array($result)) {
+
+		$arr = array("id" => $row["ID"], "invoiceID"=>$row["InvoiceID"], "name" => $row["Name"], "description" => $row["Description"], "value" => $row["Value"]);
+
+		array_push($stack, $arr);
+	}
+
+	if ($returnjason == "true") {
+
+		echo(json_encode($stack));
+
+	} else {
+
+		return $stack;
+	}
+	
 }
 
 function GetLineItems($invoiceID, $returnjason) {
@@ -720,8 +754,8 @@ function SaveInvoice($formvalues, $saveonly, $PassedInvoice) {
 	$ClientZip = $values["clientzipcode"];
 	$ClientExprirationDays = $values["expirationdays"];
 	$CustomerID = $values["customerid"];
-
-    
+	$AttachContract = $values["attachcontractvalue"] == "" ? 0:$values["attachcontractvalue"];
+	$BuildingandSpec = $values["buildingandspecs"];
 		//check if id exist insert if it doesn't
 		$query = "select ID from customer where ID=".$CustomerID;
 		$result = mysql_query($query);
@@ -752,11 +786,12 @@ function SaveInvoice($formvalues, $saveonly, $PassedInvoice) {
 	
 		//invoice doesn't exist
 		if ($saveonly == "true") {
-			$query = "INSERT INTO `invoices`(`DateTime`,`ExpirationDate`,`CustomerID`,`InvoiceTitle`)" . " VALUES (NOW(),DATE_ADD(NOW(),INTERVAL " . $ClientExprirationDays . " DAY),".$CustomerID.",'".$InvoiceTitle."')";
+			
+			$query = "INSERT INTO `invoices`(`DateTime`,`ExpirationDate`,`CustomerID`,`InvoiceTitle`,`AttachContract`,`BuildingandSpecs`)" . " VALUES (NOW(),DATE_ADD(NOW(),INTERVAL " . $ClientExprirationDays . " DAY),".$CustomerID.",'".$InvoiceTitle."',".$AttachContract.",'".$BuildingandSpec."')";
 
 		} else if ($saveonly != "true") {
 
-			$query = "INSERT INTO `invoices`(`DateTime`,`ExpirationDate`,`CustomerID`,`EmailSent`,`InvoiceTitle`)" . " VALUES (NOW(),DATE_ADD(NOW(),INTERVAL " . $ClientExprirationDays . " DAY),".$CustomerID.",1,'".$InvoiceTitle."')";
+			$query = "INSERT INTO `invoices`(`DateTime`,`ExpirationDate`,`CustomerID`,`EmailSent`,`InvoiceTitle`,`AttachContract`,`BuildingandSpecs`)" . " VALUES (NOW(),DATE_ADD(NOW(),INTERVAL " . $ClientExprirationDays . " DAY),".$CustomerID.",1,'".$InvoiceTitle."',".$AttachContract.",'".$BuildingandSpec."')";
 
 		}
         
@@ -771,11 +806,11 @@ function SaveInvoice($formvalues, $saveonly, $PassedInvoice) {
 
 		if ($saveonly == "true") {
 
-			$query = "UPDATE `invoices`" . " SET `DateTime`=NOW(),`ExpirationDate`=DATE_ADD(NOW(),INTERVAL " . $ClientExprirationDays . " DAY), `InvoiceTitle`='".$InvoiceTitle."' where `ID`=" . $PassedInvoice;
+			$query = "UPDATE `invoices`" . " SET `BuildingandSpecs`='".$BuildingandSpec."', `AttachContract` = ".$AttachContract.", `DateTime`=NOW(),`ExpirationDate`=DATE_ADD(NOW(),INTERVAL " . $ClientExprirationDays . " DAY), `InvoiceTitle`='".$InvoiceTitle."' where `ID`=" . $PassedInvoice;
 
 		} else if ($saveonly != "true") {
 
-			$query = "UPDATE `invoices`" . " SET `DateTime`=NOW(),`ExpirationDate`=DATE_ADD(NOW(),INTERVAL " . $ClientExprirationDays . " DAY),`EmailSent`=1 , `InvoiceTitle`='".$InvoiceTitle."' where `ID`=" . $PassedInvoice;
+			$query = "UPDATE `invoices`" . " SET `BuildingandSpecs`='".$BuildingandSpec."', `AttachContract` = ".$AttachContract.", `DateTime`=NOW(),`ExpirationDate`=DATE_ADD(NOW(),INTERVAL " . $ClientExprirationDays . " DAY),`EmailSent`=1 , `InvoiceTitle`='".$InvoiceTitle."' where `ID`=" . $PassedInvoice;
 
 		}
 		
@@ -833,7 +868,49 @@ function SaveInvoice($formvalues, $saveonly, $PassedInvoice) {
 
 	}
 	
+		//find ids that need to be deleted for steps
+		if(isset($values["stepid"]))
+		{
+			$idstodeletesteps = array_diff(GetStepsIDs($invoiceid), $values["stepid"]);
+		}
+		
+
+    
+	if (!empty($idstodeletesteps)) {
+
+		foreach ($idstodeletesteps as &$id) {
+
+			$query = "DELETE FROM `contractsteps` WHERE ID=" . $id;
+			mysql_query($query);
+
+		}
+
+	}
 	
+	if (!isset($values["stepid"])){
+		
+			$query = "DELETE FROM `contractsteps` WHERE InvoiceID=" . $invoiceid;
+			mysql_query($query);
+		
+	}
+	
+		if(isset($values["stepname"])){
+		for ($i = 0; $i < count($values["stepname"]); $i++) {
+		
+		if ($values["stepid"][$i] == "0" || $newinsert=="true") {
+			
+			$query = "INSERT INTO `contractsteps` (`InvoiceID`, `Name`, `Description`, `Value`) " . "VALUES (" . $invoiceid . ",'" . $values["stepname"][$i] . "','" . $values["stepdescription"][$i] . "'," . $values["stepamount"][$i] .")";
+
+		} else {
+		
+			$query = "UPDATE `contractsteps` set `Name`='".$values["stepname"][$i]."', `Description`='".$values["stepdescription"][$i]."', `Value`=".$values["stepamount"][$i]."  where `InvoiceID`=" . $invoiceid . " AND `ID`=" . $values["stepid"][$i];
+
+		}
+
+		mysql_query($query);
+
+	}
+}
 	$invoice = GetInvoice($invoiceid,false);
 
 
@@ -1004,6 +1081,25 @@ function GetItemsID($invoiceID) {
 
 }
 
+function GetStepsIDs($invoiceID){
+	
+	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+
+	$query = "SELECT ID FROM `contractsteps` where InvoiceID=" . $invoiceID;
+
+	$result = mysql_query($query);
+
+	$itemids = array();
+	while ($row = mysql_fetch_array($result)) {
+
+		array_push($itemids, $row["ID"]);
+
+	}
+
+	return $itemids;
+	
+}
 function GetImagesForInvoice($invoiceID){
 	
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
@@ -1019,9 +1115,6 @@ function GetImagesForInvoice($invoiceID){
 	}
 	
 	return $images;
-	
-}
-
-
+	}
 
 ?>

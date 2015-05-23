@@ -10,6 +10,56 @@ $(document).ready(function() {
     GetMonthDataTransaction();
 	GetCustomerList();
  
+ $(document).on('click','.directionarrows',function(){
+	 
+	 var arrow = $(this);
+	 
+	 var img = $(this).parent().find("img");
+	 
+	 var direction = $(this).attr("data-direction");
+	 
+	 var imagename = $(this).attr("data-imagename");
+	 
+	 var imageid = $(this).attr("data-imageid");
+	 
+	 $("#customloader").show();
+	 
+	 $.ajax({
+		 type:"GET",
+		 cache: 0,
+		 url:"Data/Flip.php",
+		 data : {
+			 
+			 ImageID: imageid,
+			 ImageName: imagename,
+			 Direction: direction
+			 
+		 }
+	 }).done(function(e){
+		 
+		 d = new Date();
+		 img.attr("src", img.attr('src')+"?"+d.getTime());
+		 $("#customloader").hide();
+		 
+	 });
+	 
+ });
+ 
+ 
+ 
+ $(document).on("click",".addstep",function(){
+	 
+	 AddStepsRow();
+	 
+ });
+ 
+ $(document).on("click","#removestep",function(){
+	 
+	 RemoveStepRow($(this).parent());
+	 
+ });
+ 
+ 
  
  $(document).on("click",".deleteimage",function(){
 	 
@@ -94,7 +144,7 @@ $(document).ready(function() {
     
     $(document).on("click",".deleteinvoice",function(){
         
-        
+        $("html, body").animate({ scrollTop: 0 }, "slow");
         var invoiceid = $(this).attr("data-invoice-id");
         
         
@@ -395,6 +445,25 @@ e.preventDefault();
 		}
 
 	});
+	
+	$(document).on("change", ".attachcontract", function() {
+
+		if (this.checked) {
+
+			$("#contractinfo").slideDown();
+		
+			$(this).next().val("1");
+
+		} else {
+
+		
+		$("#contractinfo").slideUp();
+			$(this).next().val("0");
+
+		}
+
+	});
+	
 	$(document).on("change", ".expense", function() {
 
 		if (this.checked) {
@@ -547,6 +616,9 @@ e.preventDefault();
 
 			$("#customloader").show();
             enableCustomerFields();
+	
+			CheckBuildingandSpecs();
+			
 			SaveInvoice($('form[name="invoiceform"]').serialize(), false, $("input[name='invoiceid']").val());
 
 		} else {
@@ -573,7 +645,11 @@ e.preventDefault();
 				$("input[name='invoiceid']").val("");
 				$(".createinvoicecopy").prop('checked',false);
 			}
+			
+			
 			enableCustomerFields();
+			CheckBuildingandSpecs();
+			
 			SaveInvoice($('form[name="invoiceform"]').serialize(), true, $("input[name='invoiceid']").val());
 
 		} else {
@@ -845,7 +921,7 @@ function GetSavedInvoices(date) {
 			 
 				if(this.title!=''){title = "&nbsp;-&nbsp;"+this.title;}
 			
-				$(".invoicesaved").append('<div class="invoicerow"><div class="innerrow"><div style="text-align:center;width:100%!important" class="innercolumn"><span class="invoiceheader">Estimate ID - #&nbsp;</span><span class="rowinvoiceid" style="font-weight:bold">' + this.invoiceID + '</span>'+title+'</div><div class="innercolumn"><span class="invoiceheader">Name</span>&nbsp;<span class="invoicerowname"  style="font-weight:bold">' + this.clientname + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Address</span>&nbsp;' + this.clientstreetaddress + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Location</span>&nbsp;' + this.clientcitystatezip + '</div>' + '<div  class="innercolumn"><span class="invoiceheader">Invoice Total</span>&nbsp;<span class="invoicerowtotal" data-val="' + this.invoicetotal + '" style="color:green;font-weight:bold">$&nbsp;' + this.invoicetotal + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Email</span>&nbsp;<span class="invoicerowemail">' + this.clientemail + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Create Date</span>&nbsp;' + this.createddate + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Expires</span>&nbsp;' + this.expirationdate + '</div>' + '<div  class="innercolumn"><a target="_blank" href="Data/generatepdf/' + btoa("invoiceID=" + this.invoiceID) + '">View</a> | <span data-invoice-id="' + this.invoiceID + '" class ="link loadinvoice">Load</span> | <span data-invoice-id="'+this.invoiceID+'" class="link addviewimages blue">Add/View Images</span> | <span data-invoice-id="' + this.invoiceID + '" class="link sendsavedinvoice">Send</span> | <span data-invoice-id="' + this.invoiceID + '" class="link deleteinvoice">Delete</span></div>'
+				$(".invoicesaved").append('<div class="invoicerow"><div class="innerrow"><div style="text-align:center;width:100%!important" class="innercolumn"><span class="invoiceheader">Estimate ID - #&nbsp;</span><span class="rowinvoiceid" style="font-weight:bold">' + this.invoiceID + '</span>'+title+'</div><div class="innercolumn"><span class="invoiceheader">Name</span>&nbsp;<span class="invoicerowname"  style="font-weight:bold">' + this.clientname + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Address</span>&nbsp;' + this.clientstreetaddress + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Location</span>&nbsp;' + this.clientcitystatezip + '</div>' + '<div  class="innercolumn"><span class="invoiceheader">Invoice Total</span>&nbsp;<span class="invoicerowtotal" data-val="' + this.invoicetotal + '" style="color:green;font-weight:bold">$&nbsp;' + this.invoicetotal + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Email</span>&nbsp;<span class="invoicerowemail">' + this.clientemail + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Create Date</span>&nbsp;' + this.createddate + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Expires</span>&nbsp;' + this.expirationdate + '</div>' + '<div  class="innercolumn"><a target="_blank" href="Data/generatepdf/' + btoa("invoiceID=" + this.invoiceID) + '">View</a> | <span data-invoice-id="' + this.invoiceID + '" class ="link loadinvoice">Load</span> | <span data-invoice-id="'+this.invoiceID+'" class="link addviewimages blue">Images</span> | <span data-invoice-id="' + this.invoiceID + '" class="link sendsavedinvoice">Send</span> | <span data-invoice-id="' + this.invoiceID + '" class="link deleteinvoice">Delete</span></div>'
 				+ '<div style="clear:both"></div>'
 				 
 				+ '<div class="imagessection" data-invoice-id='+this.invoiceID+'>'
@@ -1177,6 +1253,7 @@ function ValidateForm() {
 	$("input[name='taxrate']").val($(".taxrate").val());
 
 	$(".invoice input").each(function() {
+	
 
 		if (String($(this).attr("name")).indexOf("clientcitystate") > -1) {
 
@@ -1193,7 +1270,8 @@ function ValidateForm() {
 			}
 		} else if ($(this).val() == "") {
 
-			if (String($(this).attr("class")).indexOf("description") > -1 || String($(this).attr("name")).indexOf("invoiceid") > -1 || String($(this).attr("class")).indexOf("itemid") > -1 || String($(this).attr("class")).indexOf("clientid") > -1) {
+			
+			if (String($(this).attr("type").indexOf("hidden")) > -1 || String($(this).attr("class")).indexOf("hidden") > -1 || String($(this).attr("class")).indexOf("description") > -1 || String($(this).attr("name")).indexOf("invoiceid") > -1 || String($(this).attr("class")).indexOf("itemid") > -1 || String($(this).attr("class")).indexOf("clientid") > -1) {
 
 			} else if (String($(this).attr("class")).indexOf("itemname") > -1) {
 
@@ -1223,7 +1301,9 @@ function ValidateForm() {
 
 	});
 
+	
 	return returned;
+	
 
 }
 
@@ -1443,6 +1523,8 @@ function LoadInvoice(invoiceid) {
 		}
 	}).done(function(data) {
 
+	
+	
 		var invoice = JSON.parse(data);
 
 		$("input[name='clientname']").val(invoice.clientname);
@@ -1452,6 +1534,20 @@ function LoadInvoice(invoiceid) {
 		$("input[name='clientzipcode']").val(invoice.clientzip);
 		$("input[name='customerid']").val(invoice.customerid);
 		$("input[name='clienttitle']").val(invoice.invoicetitle);
+
+		if(invoice.attachcontract == "1"){
+			
+			$("#attachcontract").prop('checked', true);
+			$("input[name='attachcontractvalue']").val(1);
+			
+			$("#buildingandspecs").val(invoice.buildingandspecs);
+			
+			$("#contractinfo").show();
+			
+		    LoadSteps(invoiceid);
+			
+		}
+
 		
 		disableCustomerFields();
 		
@@ -1462,9 +1558,39 @@ function LoadInvoice(invoiceid) {
 		$(".createcopydiv").css('display','inline-block');
 		
 		LoadInvoiceItems(invoiceid);
+		
+		
 
 	});
 
+}
+
+function LoadSteps(invoiceid){
+	
+	$.ajax({
+
+		type : "GET",
+		cache : false,
+		url : "Data/DataModel.php",
+		data : {
+			GetSteps : "true",
+			InvoiceID : invoiceid
+		}
+	}).done(function(data) {
+		
+		$("#stepscontainer").empty();
+		
+		var steps = JSON.parse(data);
+		
+		jQuery.each(steps, function() {
+
+			AddStepsRow(this.id,this.name,this.description,this.value);
+				
+		});
+		
+	});
+	
+	
 }
 
 function LoadInvoiceItems(invoiceid) {
@@ -1815,6 +1941,9 @@ function clearForm() {
 	$(".totaltaxes").html("$0.00");
 	$(".totalsum").html("$0.00");
     $(".createcopydiv").hide();
+	$(".attachcontract").prop("checked",false);
+	$("input[name='attachcontractvalue']").val(0);
+	
 
 	var element = $(".itemrow").last().clone();
 
@@ -1831,6 +1960,12 @@ function clearForm() {
 	element.find(".expense").prop('checked', false);
 
 	$(".itemscontainer").append(element);
+	
+	//clear contract information
+	
+	$("#buildingandspecs").val("");
+	$("#stepscontainer").empty();
+	$("#contractinfo").hide();
 
 }
 
@@ -2232,7 +2367,7 @@ function disableCustomerFields(){
 
 function enableCustomerFields(){
     
-    //disable so name can't be changed
+		//disable so name can't be changed
 		$("input[name='clientname']").prop("disabled",false);
 		$("input[name='clientemail']").prop("disabled",false);
 		$("input[name='clientstreetaddress']").prop("disabled",false);
@@ -2264,7 +2399,7 @@ $.ajax({
 
 		jQuery.each(jsondata,function(){
 			
-			$("#invoiceimagecontainer .row").append("<li class='col-lg-2 col-md-3 col-sm-6 col-xs-12'><div class='ProjectsImageHolder' data-ajax-id='"+this.ID+"'><img class='itemimage' src='"+this.link+"'/><a href='#' onclick='return false;' class='deleteimage' data-invoice-id='"+invoiceID+"' id='deleteimage' data-image-id='"+this.ID+"'>Delete</a><br/><a class='directionarrows' id='verticalflip' data-direction='Vertical' href='#' onclick='return false;' data-image-id='"+this.ID+"'>↕</a>&nbsp;&nbsp;<a class='directionarrows' id='horizontalflip' data-direction='Horizontal' href='#' onclick='return false;' data-imageid='"+this.ID+"'>↔</a></div></li>");
+			$("#invoiceimagecontainer .row").append("<li class='col-lg-2 col-md-3 col-sm-6 col-xs-12'><div class='ProjectsImageHolder' data-ajax-id='"+this.ID+"'><img class='itemimage' src='"+this.link+"'/><a href='#' onclick='return false;' class='deleteimage' data-invoice-id='"+invoiceID+"' id='deleteimage' data-image-id='"+this.ID+"'>Delete</a><br/><a class='directionarrows' id='verticalflip' data-direction='Vertical' href='#' onclick='return false;' data-imagename='"+this.link+"' data-image-id='"+this.ID+"'>↕</a>&nbsp;&nbsp;<a class='directionarrows' id='horizontalflip' data-imagename='"+this.link+"' data-direction='Horizontal' href='#' onclick='return false;' data-imageid='"+this.ID+"'>↔</a></div></li>");
 			
 			
 		});
@@ -2277,6 +2412,37 @@ $.ajax({
 	
 }
 
+function AddStepsRow(id,stepname, stepdescription, stepvalue){
+	
+	id = id == undefined ? 0:id;
+	stepname = stepname == undefined ? "":stepname;
+	stepdescription = stepdescription == undefined ? "":stepdescription;
+	stepvalue = stepvalue == undefined ? "":stepvalue;
+	
+	var html ='<div><input type="hidden" name="stepid[]" value="'+id+'"/><input type ="text" name="stepname[]" value="'+stepname+'" placeholder="Step Name"/><input type ="text" value="'+stepdescription+'" name="stepdescription[]" placeholder="Step Description"/><input value="'+stepvalue+'" class="stepnamerequired" type ="text" onkeypress="return isDecimal(event)" name="stepamount[]" placeholder="Step Amount"/><a id="removestep">Remove</a></div>'
+	$("#stepscontainer").append(html);
+	
+}
+
+function RemoveStepRow(rowtoremove){
+	
+	rowtoremove.remove();
+	
+}
+
+function CheckBuildingandSpecs(){
+	
+	
+			
+			if (!$('.attachcontract').is(":checked")){
+		
+		$("#buildingandspecs").val("");
+		$("#stepscontainer").remove();
+		
+		
+	}
+	
+}
 
 function sortCustomers(order,ascdes,parent) {
 
