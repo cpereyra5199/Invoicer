@@ -148,6 +148,7 @@ $this->Image($url,$x1,$y1,40,25);
 
 function AddImages($images){
 	
+	if(count($images)>0){
 	$x1=10;
 	$y1=10;
 	
@@ -171,9 +172,9 @@ function AddImages($images){
 	$count=$count+1;
 	
 		
+	
+}
 	}
-	
-	
 }
 
 // Company

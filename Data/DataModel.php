@@ -180,8 +180,7 @@ function GetCustomerInvoicesByID($customerid){
     mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
     
-    $query = "select SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount,Paid,PaidDate,EmailSent,i.InvoiceTitle as Title, i.ID, DateTime, ExpirationDate,CustomerID,case when ExpirationDate < DateTime and Paid=0 then 'Expired' when Paid = 1 then 'Paid' when EmailSent = 1 and Paid = 0 then 'Invoice Sent' when EmailSent=0 then 'Estimate Created' else 'OK' end as status from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID  where i.CustomerID=".$customerid." GROUP BY i.ID order by Datetime desc, i.id desc";
-
+	$query = "select SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2)) as TotalAmount,  IFNULL(SUM(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2)),0.00) as ExpenseTotal,(SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2))-IFNULL(SUM(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2)),0.00)) as Net,Paid,PaidDate,EmailSent,i.InvoiceTitle as Title, i.ID, DateTime, ExpirationDate,CustomerID,case when ExpirationDate < Now() and Paid=0 then 'Expired' when Paid = 1 then 'Paid' when EmailSent = 1 and Paid = 0 then 'Invoice Sent' when EmailSent=0 then 'Estimate Created' else 'OK' end as status from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID left join `invoiceitem` expenses on expenses.InvoiceID = i.ID and expenses.Expense = 1  where i.CustomerID=".$customerid." GROUP BY i.ID order by Datetime desc, i.id desc";
 	$result = mysql_query($query);
     
     
@@ -213,6 +212,8 @@ function GetCustomerInvoicesByID($customerid){
 	    "expirationdate" => $dateexpired-> format('m/d/y'), 
 	    "invoiceID" => $row["ID"],
 	    "totalamount"=>$row["TotalAmount"],
+		"expensetotalamount"=>$row["ExpenseTotal"],
+		"net"=>$row["Net"],
         "status"=>$row["status"],
 		"title"=>$row["Title"],
 	    "expirationdatecount" => $interval -> format("%a"));

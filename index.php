@@ -22,6 +22,7 @@
 <script src="Scripts/jquery.paulund_modal_box.js"></script>
 <link rel="stylesheet" type="text/css" href="CSS/style.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="CSS/uploadfile.min.css" media="screen" />
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
 

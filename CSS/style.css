@@ -195,7 +195,7 @@ float: left;
 
 .customerinvoices .rowitem{
     
-    width: 12.5%;
+    width: 10%;
 padding: 2px;
 float: left;
     
@@ -269,6 +269,13 @@ background-color:#FAFAFA;
 }
 
 @media (max-width:400px){
+
+
+.pure-table td, .pure-table th{
+
+padding:0!important;
+
+}
 
 .customers{
 
@@ -1095,5 +1102,79 @@ position:relative;
 #invoiceimagecontainer{
 
 padding:15px;
+
+}
+
+/*colors*/
+
+.headerexpired{
+
+background-color:#F2353D;
+color:white;
+
+}
+
+.headerlighterblue{
+
+background-color:#008ADF;
+color:white;
+
+}
+
+.headerblue{
+
+background-color:#193048;
+color:white;
+
+}
+
+.negativenet{
+
+color:red;
+
+}
+
+.positivenet{
+
+color:green;
+
+}
+
+.expiredhue,.expensehue{
+
+background-color:#F2353D;
+
+}
+.paidhue,.incomehue{
+
+background-color:#53BC44;
+
+}
+.invoiceshue{
+
+background-color:#00B2FF;
+
+}
+			
+.estimateshue{
+
+background-color:#FFBD20;
+
+}
+
+
+/*paddings*/
+
+.padding1{
+
+padding:5px;
+
+}
+
+/*widths*/
+
+.width-100{
+
+width:100%!important;
 
 }

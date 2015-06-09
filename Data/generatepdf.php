@@ -78,6 +78,8 @@ $itemsarray = array();
 
 foreach($LineItems as &$val){
 	
+if(!$val["itemexpense"]){
+	
 	$line = array( $itemcolumn    => $val["itemname"],
                $itemdescription  => $val["itemdescription"],
                $itemquantity     => $val["itemquantity"],
@@ -87,7 +89,7 @@ $size = $pdf->addLine( $y, $line );
 $y   += $size + 2;
 	
 array_push($itemsarray,array ( "px_unit" => $val["itemtotal"], "qte" => $val["itemquantity"], "taxable"=>$val["itemtaxable"], "rate"=>$val["itemrate"] ));
-	
+}
 	
 }
   

@@ -1611,10 +1611,14 @@ function isDecimal(evt) {
 }
 
 function GetCustomerInvoicesByID(customerid){
-    
-
-    var html="<div class='customerinvoices'>";
-
+   
+    var html = "<div class='customerinvoices'>";
+	html = html + "<h2><table id='customerinfotable' class='pure-table pure-table-horizontal headerlighterblue width-100'><tbody><tr><td>Income</td><td class='text-right' id='totalcustomerincome'></td></tr><tr><td>Expenses</td><td class='text-right' id='totalcustomerexpense'></td></tr><tr><td>Net</td><td class='text-right' id='totalcustomernet'></td></tr></tbody></table></h2>";
+	html = html + "<h2><table class='pure-table pure-table-horizontal headerexpired width-100'><tbody><tr><td>Outstanding</td><td id='outstandingtotal' class='text-right'></td></tr></tbody></table></h2>"
+	var incometotal = Number(0);
+	var expense = Number(0);
+	var outstandingtotal = Number(0);
+	
 	$.ajax({
 
 		type : "GET",
@@ -1630,27 +1634,70 @@ function GetCustomerInvoicesByID(customerid){
         
         html+= "<div class='customerrowheader'><div data-sort='asc' class='rowitem invoiceid'>Invoice ID</div><div data-sort='asc' class='rowitem title'>"
 		+"Title"+"</div><div data-sort='asc' class='rowitem totalamount'>"
-        +"Total Amount"+"</div><div data-sort='asc' class='rowitem createddate'>"
+        +"Total Amount"+"</div><div data-sort='asc' class='rowitem expensetotalamount'>"
+		+"Expense Total"+"</div><div data-sort='asc' class='rowitem net'>"
+		+"Net"+"</div><div data-sort='asc' class='rowitem createddate'>"
         +"Created Date"+"</div><div data-sort='asc' class='rowitem expirationdate'>"
         +"Expiration Date"+"</div><div data-sort='asc' class='rowitem status'>"+"Status"+"</div><div data-sort='asc' class='rowitem paid'>"+"Paid"+"</div><div class='rowitem'><span class='link viewcustomerinvoice'>Action</span></div></div>";
 	
 		jQuery.each(customerinvoices,function(){
 		
-        
+        var color = this.net >= 0 ? "positivenet":"negativenet";
+		
+		var statuscolor;
+		
+		switch(this.status){
+			case "Expired":
+			statuscolor="expiredhue";
+			break;
+			
+			case "Paid":
+			statuscolor="paidhue";
+			break;
+			
+			case "Invoice Sent":
+			statuscolor="invoiceshue";
+			break;
+			
+			case "Estimate Created": case "OK":
+			statuscolor="estimateshue";
+			break;
+			
+			default:
+			break;
+		}
+		
         html+= "<div class='customerrow'><input class='custerlistcustomerid' type='hidden' value='"+this.invoiceID+"' /><div class='rowitem invoiceid'><span class='mobilecustomerheader'>Invoice ID: </span><span>"
 		+this.invoiceID+"</span></div><div class='rowitem title'><span class='mobilecustomerheader'>Title: </span><span>"
         +this.title+"</span></div><div class='rowitem totalamount'><span class='mobilecustomerheader'>Total Amount: </span><span>"
-        +this.totalamount+"</span></div><div class='rowitem createddate'><span class='mobilecustomerheader'>Created Date: </span><span>"
+        +this.totalamount+"</span></div><div class='rowitem expensetotalamount'><span class='mobilecustomerheader'>Expense Total: </span><span>"
+		+this.expensetotalamount+"</span></div><div class='rowitem net "+color+"'><span class='mobilecustomerheader'>Net: </span><b><span>"
+		+this.net+"</span></b></div><div class='rowitem createddate'><span class='mobilecustomerheader'>Created Date: </span><span>"
         +this.createddate+"</span></div><div class='rowitem expirationdate'><span class='mobilecustomerheader'>Expiration Date: </span><span>"
-        +this.expirationdate+"</span></div><div class='rowitem status'><span class='mobilecustomerheader'>Status: </span><span>"+this.status+"</span></div><div class='rowitem paid'><span class='mobilecustomerheader'>Paid Date: </span><span>"+this.paiddate+"</span></div><div class='rowitem'><a target='_blank' href='Data/generatepdf/"+btoa("invoiceID=" + this.invoiceID) + "'>View</a></div></div>";
+        +this.expirationdate+"</span></div><div class='rowitem status "+statuscolor+"'><span class='mobilecustomerheader'>Status: </span><span>"+this.status+"</span></div><div class='rowitem paid'><span class='mobilecustomerheader'>Paid Date: </span><span>"+this.paiddate+"</span></div><div class='rowitem'><a target='_blank' href='Data/generatepdf/"+btoa("invoiceID=" + this.invoiceID) + "'>View</a>&nbsp;|&nbsp;<span data-invoice-id='"+this.invoiceID+"' class='link loadinvoice'>Load</span></div></div>";
 
+		if(this.status=="Paid"){
+		incometotal = Number(incometotal) + Number(this.totalamount);
+		expense = Number(expense) + Number(this.expensetotalamount);
+		}
+		
+		if(this.status == "Expired"){
+			
+		outstandingtotal = Number(outstandingtotal)+Number(incometotal-expense);
+			
+		}
+		
         });
         
         html+="</div>";
-        
+		
         $(".customerspage").append(html);
+
+		$("#totalcustomerincome").html("$"+incometotal);
+		$("#totalcustomerexpense").html("$"+expense);
+		$("#totalcustomernet").html("$"+(incometotal-expense));
+		$("#outstandingtotal").html("$"+outstandingtotal);
         
-      	
 		});	
     
 }
@@ -2304,9 +2351,9 @@ function sortCustomers(order,ascdes,parent) {
 	
 	}
   }
-  
+
   // Sort it
-  if(order == "totalamount"){
+  if(order == "totalamount" || order == "expensetotalamount" || order == "net"){
 	  
 	  vals.sort(function(a,b) { return a - b; });
 	  
