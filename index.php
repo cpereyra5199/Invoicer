@@ -162,7 +162,7 @@
 
 <input type="hidden" class="itemname" value="" name="itemname[]" />
 <input type="hidden" class="itemid" value="" name="itemid[]" />
-<input type="text" name="description[]" class="description" maxlength="200" placeholder="Description"/>
+<input type="text" name="description[]" class="description" placeholder="Description"/>
 <input type="text" name="quantity[]" onkeypress="return isNumber(event)" value="1" class="quantity" placeholder="Quantity"/>
 <input type="text" name="price[]" onkeypress="return isDecimal(event)" class="price" placeholder="Price"/>
 

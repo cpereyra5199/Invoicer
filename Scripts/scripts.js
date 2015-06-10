@@ -10,6 +10,15 @@ $(document).ready(function() {
     GetMonthDataTransaction();
 	GetCustomerList();
  
+ $(document).on('click','#newcustomerinvoice',function(){
+	 
+	 var customerid = $(this).attr("data-customer-id");
+	 clearForm();
+	 LoadCustomer(customerid);
+	 LoadSection("invoice");
+	 
+	 
+ });
  
  $(document).on("click",".deleteimage",function(){
 	 
@@ -595,8 +604,8 @@ $(document).on("click", ".homebtn", function() {
 
         $(".paulund_block_page").remove();
 		if(!$(".homepage").is(":visible")){
-		hideAll();
-		$(".homepage").toggle("slow");
+		
+		LoadSection("homepage");
 }
 
 	});
@@ -606,8 +615,7 @@ $(document).on("click", ".homebtn", function() {
 
         $(".paulund_block_page").remove();
 		if(!$(".settings").is(":visible")){
-		hideAll();
-		$(".settings").toggle("slow");
+		LoadSection("settings");
 }
 	});
 
@@ -615,8 +623,7 @@ $(document).on("click", ".homebtn", function() {
 		
 		$(".paulund_block_page").remove();
 		if(!$(".categories").is(":visible")){
-		hideAll();
-		$(".categories").toggle("slow");
+		LoadSection("categories");
 }
 	});
 	
@@ -624,8 +631,7 @@ $(document).on("click", ".homebtn", function() {
 		
 		$(".paulund_block_page").remove();
 		if(!$(".Search").is(":visible")){
-		hideAll();
-		$(".Search").toggle("slow");
+		LoadSection("Search");
 }
 	});
 	
@@ -633,8 +639,7 @@ $(document).on("click", ".homebtn", function() {
 		
 		$(".paulund_block_page").remove();
 		if(!$(".invoice").is(":visible")){
-		hideAll();
-		$(".invoice").toggle("slow");
+		LoadSection("invoice");
 }
 	});
     
@@ -642,8 +647,7 @@ $(document).on("click", ".homebtn", function() {
 		
 		$(".paulund_block_page").remove();
         GetCustomerDetails();
-		hideAll();
-		$(".customerspage").toggle("slow");
+		LoadSection("customerspage");
 
 	});
 	
@@ -1569,16 +1573,35 @@ function LoadInvoiceItems(invoiceid) {
 
 		});
 
-			hideAll();
-		$(".invoice").toggle("slow");
+		LoadSection("invoice");
+	});
+
+}
+
+function LoadSection(section){
+	
+		if(section == "invoice"){
+			
+		hideAll();
+		$("."+section).toggle("slow");
 
 		calculateTotal();
 		$("html, body").animate({
 			scrollTop : 0
 		}, "slow");
-		ValidateForm();
-	});
-
+			
+			
+		}else{
+			
+		hideAll();
+		$("."+section).toggle("slow");
+			
+			
+		}
+	
+		
+	
+	
 }
 
 function isNumber(evt) {
@@ -1614,7 +1637,8 @@ function GetCustomerInvoicesByID(customerid){
    
     var html = "<div class='customerinvoices'>";
 	html = html + "<h2><table id='customerinfotable' class='pure-table pure-table-horizontal headerlighterblue width-100'><tbody><tr><td>Income</td><td class='text-right' id='totalcustomerincome'></td></tr><tr><td>Expenses</td><td class='text-right' id='totalcustomerexpense'></td></tr><tr><td>Net</td><td class='text-right' id='totalcustomernet'></td></tr></tbody></table></h2>";
-	html = html + "<h2><table class='pure-table pure-table-horizontal headerexpired width-100'><tbody><tr><td>Outstanding</td><td id='outstandingtotal' class='text-right'></td></tr></tbody></table></h2>"
+	html = html + "<h2><table class='pure-table pure-table-horizontal headerexpired width-100'><tbody><tr><td>Outstanding</td><td id='outstandingtotal' class='text-right'></td></tr></tbody></table></h2><br/><br/>";
+	html = html + "<button class='pure-button pure-button-primary' data-customer-id='"+customerid+"' id='newcustomerinvoice'>New Invoice</button></br></br>";
 	var incometotal = Number(0);
 	var expense = Number(0);
 	var outstandingtotal = Number(0);
