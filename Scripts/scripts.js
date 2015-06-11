@@ -122,12 +122,12 @@ $(document).ready(function() {
         
     });
 	
-    $(document).on("click",".viewcustomer",function(){
+    $(document).on("click",".customerselect",function(){
         
         
-        var parentdiv = $(this).parent().parent().parent();
+        var parentdiv = $(this).parent();
         
-        var row = $(this).parent().parent();
+        var row = $(this);
         
         var items = row.find(".rowitem");
         
@@ -290,6 +290,13 @@ e.preventDefault();
 		
 	});
 
+	$(document).on("click","div[data-ajax-target='loadcustomerinvoice']",function(){
+	
+	$invoiceid = $(this).attr("data-invoice-id");
+
+		LoadInvoice($invoiceid);
+	
+	});
 
 	$(document).on("click", ".loadinvoice", function() {
 
@@ -1047,7 +1054,7 @@ function GetCustomerDetails(){
     $(".customerinvoices").remove();
     
     var html = "<div class='customerdivcontainer'><div style='text-align:center'><input class='customersearchbox' type='text' placeholder='Search' /></div>";
-    html+= "<div class='customerrowheader'><div data-sort='asc' class='rowitem name'>Name</div><div data-sort='asc' class='rowitem email'>Email</div><div data-sort='asc' class='rowitem address'>Address</div><div data-sort='asc' class='rowitem citystate'>City, State</div><div data-sort='asc' class='rowitem zipcode'>Zip Code</div><div class='rowitem'>Action</div></div>";
+    html+= "<div class='customerrowheader'><div data-sort='asc' class='rowitem name'>Name</div><div data-sort='asc' class='rowitem email'>Email</div><div data-sort='asc' class='rowitem address'>Address</div><div data-sort='asc' class='rowitem citystate'>City, State</div><div data-sort='asc' class='rowitem zipcode'>Zip Code</div></div>";
     
     $.ajax({
 		type : "GET",
@@ -1063,11 +1070,11 @@ function GetCustomerDetails(){
         jQuery.each(output,function(){
             
             
-        html+= "<div class='customerrow'><input class='custerlistcustomerid' type='hidden' value='"+this.id+"' /><div class='rowitem name'>"
+        html+= "<div class='customerrow customerselect'><input class='custerlistcustomerid' type='hidden' value='"+this.id+"' /><div class='rowitem name'>"
         +this.name+"</div><div class='rowitem email'>"
         +this.email+"</div><div class='rowitem address'>"
         +this.StreetAddress+"</div><div class='rowitem citystate'>"
-        +this.citystate+"</div><div class='rowitem zipcode'>"+this.zipcode+"</div><div class='rowitem'><span class='link viewcustomer'>View</span></div></div>";
+        +this.citystate+"</div><div class='rowitem zipcode'>"+this.zipcode+"</div></div>";
 
         });
         
@@ -1461,7 +1468,10 @@ function LoadInvoice(invoiceid) {
 		
 		$("input[name='expirationdays']").val(invoice.expirationdatecount);
 		$("input[name='invoiceid']").val(invoice.invoiceID);
-		$(".invoideIDlabelval").html(invoice.invoiceID);
+		
+		var html = "<span>"+invoice.invoiceID+"</span>&nbsp;&nbsp;<a target='_blank' href='Data/generatepdf/"+btoa("invoiceID=" + invoice.invoiceID) + "'>View</a>";
+		
+		$(".invoideIDlabelval").html(html);
 		$(".invoiceidlabel").show();
 		$(".createcopydiv").css('display','inline-block');
 		
@@ -1662,7 +1672,7 @@ function GetCustomerInvoicesByID(customerid){
 		+"Expense Total"+"</div><div data-sort='asc' class='rowitem net'>"
 		+"Net"+"</div><div data-sort='asc' class='rowitem createddate'>"
         +"Created Date"+"</div><div data-sort='asc' class='rowitem expirationdate'>"
-        +"Expiration Date"+"</div><div data-sort='asc' class='rowitem status'>"+"Status"+"</div><div data-sort='asc' class='rowitem paid'>"+"Paid"+"</div><div class='rowitem'><span class='link viewcustomerinvoice'>Action</span></div></div>";
+        +"Expiration Date"+"</div><div data-sort='asc' class='rowitem status'>"+"Status"+"</div><div data-sort='asc' class='rowitem paid'>"+"Paid"+"</div></div>";
 	
 		jQuery.each(customerinvoices,function(){
 		
@@ -1691,15 +1701,17 @@ function GetCustomerInvoicesByID(customerid){
 			break;
 		}
 		
-        html+= "<div class='customerrow'><input class='custerlistcustomerid' type='hidden' value='"+this.invoiceID+"' /><div class='rowitem invoiceid'><span class='mobilecustomerheader'>Invoice ID: </span><span>"
+        html+= "<div class='customerrow' data-ajax-target='loadcustomerinvoice' data-invoice-id='"+this.invoiceID+"'><input class='custerlistcustomerid' type='hidden' value='"+this.invoiceID+"' /><div class='rowitem invoiceid'><span class='mobilecustomerheader'>Invoice ID: </span><span>"
 		+this.invoiceID+"</span></div><div class='rowitem title'><span class='mobilecustomerheader'>Title: </span><span>"
         +this.title+"</span></div><div class='rowitem totalamount'><span class='mobilecustomerheader'>Total Amount: </span><span>"
         +this.totalamount+"</span></div><div class='rowitem expensetotalamount'><span class='mobilecustomerheader'>Expense Total: </span><span>"
 		+this.expensetotalamount+"</span></div><div class='rowitem net "+color+"'><span class='mobilecustomerheader'>Net: </span><b><span>"
 		+this.net+"</span></b></div><div class='rowitem createddate'><span class='mobilecustomerheader'>Created Date: </span><span>"
         +this.createddate+"</span></div><div class='rowitem expirationdate'><span class='mobilecustomerheader'>Expiration Date: </span><span>"
-        +this.expirationdate+"</span></div><div class='rowitem status "+statuscolor+"'><span class='mobilecustomerheader'>Status: </span><span>"+this.status+"</span></div><div class='rowitem paid'><span class='mobilecustomerheader'>Paid Date: </span><span>"+this.paiddate+"</span></div><div class='rowitem'><a target='_blank' href='Data/generatepdf/"+btoa("invoiceID=" + this.invoiceID) + "'>View</a>&nbsp;|&nbsp;<span data-invoice-id='"+this.invoiceID+"' class='link loadinvoice'>Load</span></div></div>";
+        +this.expirationdate+"</span></div><div class='rowitem status "+statuscolor+"'><span class='mobilecustomerheader'>Status: </span><span>"+this.status+"</span></div><div class='rowitem paid'><span class='mobilecustomerheader'>Paid Date: </span><span>"+this.paiddate+"</span></div></div>";
 
+		//<a target='_blank' href='Data/generatepdf/"+btoa("invoiceID=" + this.invoiceID) + "'>View</a>&nbsp;|&nbsp;
+		
 		if(this.status=="Paid"){
 		incometotal = Number(incometotal) + Number(this.totalamount);
 		expense = Number(expense) + Number(this.expensetotalamount);

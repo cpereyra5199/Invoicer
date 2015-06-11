@@ -187,7 +187,7 @@ float:left;
 
 .rowitem{
     
-    width: 16.66%;
+    width: 20%;
 padding: 2px;
 float: left;
     
@@ -195,7 +195,7 @@ float: left;
 
 .customerinvoices .rowitem{
     
-    width: 10%;
+width: 11.11%;
 padding: 2px;
 float: left;
     
@@ -406,6 +406,13 @@ background-color:lightgray;
 color:#428bca;
 }
 
+.customerrow:hover{
+
+cursor: pointer;
+background-color:#0078e7;
+color:white;
+
+}
 
 .itemlist{
 height: 32px;
