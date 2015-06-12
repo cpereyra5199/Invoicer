@@ -175,6 +175,77 @@ mysql_query($query);
 	
 }
 
+function ProfitabilityReport($startdate,$enddate){
+	
+	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+	
+	$query = "select distinct c.ID, Name from `customer` c inner join `invoices` i on i.CustomerID = c.ID where i.Paid=1 and i.PaidDate >= STR_TO_DATE('".$startdate."','%m/%d/%Y') AND i.PaidDate <= STR_TO_DATE('".$enddate."','%m/%d/%Y') order by Name ASC";
+	
+	$result = mysql_query($query);
+	
+	$fullarray = array();  
+	
+	$customercount = 0;
+	
+	while ($customer = mysql_fetch_array($result)) {
+		
+		$customerid = $customer["ID"];
+		$customername = $customer["Name"];
+		
+		$customerarray = array(
+		
+		"ID" => $customerid,
+		"Name" => $customername,
+		"Job"=>array(
+		array("InvoiceID"=>"",
+		"InvoiceTitle"=>"",
+		"TotalAmount"=>"",
+		"ExpenseTotal"=>"",
+		"Net"=>""
+		))
+		);
+		
+		array_push($fullarray,$customerarray);
+		
+		$query = "select i.ID,i.InvoiceTitle,ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2) as TotalAmount,  IFNULL(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2),0.00) as ExpenseTotal,(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2)-IFNULL(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2),0.00)) as Net from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID and it.Expense=0 left join `invoiceitem` expenses on expenses.InvoiceID = i.ID and expenses.Expense = 1 where i.CustomerID = ".$customerid." and i.Paid=1 GROUP BY i.ID order by i.ID asc";
+		
+		$innerresult = mysql_query($query);
+		
+		while ($customerrow = mysql_fetch_array($innerresult)) {
+
+		$invoicetitle = "";
+
+		if($customerrow["InvoiceTitle"]==""){
+
+			$invoicetitle="No Title";
+			
+		}else{
+			
+			$invoicetitle = $customerrow["InvoiceTitle"];
+			
+		}
+		
+		$customerarraysingle = array(
+		"InvoiceID"=>$customerrow["ID"],
+		"InvoiceTitle"=>$invoicetitle,
+		"TotalAmount"=>$customerrow["TotalAmount"],
+		"ExpenseTotal"=>$customerrow["ExpenseTotal"],
+		"Net"=>$customerrow["Net"]
+		);
+		
+		array_push($fullarray[$customercount]['Job'],$customerarraysingle);
+	
+		
+	}
+	
+	$customercount++;
+	}
+	
+	return $fullarray;
+	
+}
+
 function GetCustomerInvoicesByID($customerid){
     
     mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");

@@ -9,6 +9,23 @@ $(document).ready(function() {
 	GetMonthData();
     GetMonthDataTransaction();
 	GetCustomerList();
+	initializeDatePickers();
+	
+ 
+ 
+ $(document).on('click',"a[data-ajax-target='getreports']",function(){
+	 
+	 var startdatetextbox = $("#startdate");
+	 var enddatetextbox = $("#enddate");
+	 
+	 if(validateReportDates(startdatetextbox,enddatetextbox)){
+		 
+		 $(this).attr("href","Data/profitreport/"+btoa("startdate=" + startdatetextbox.val()+"&enddate="+enddatetextbox.val()));
+		 
+	 }
+	 
+ });
+
  
  $(document).on('click','#newcustomerinvoice',function(){
 	 
@@ -655,6 +672,14 @@ $(document).on("click", ".homebtn", function() {
 		$(".paulund_block_page").remove();
         GetCustomerDetails();
 		LoadSection("customerspage");
+
+	});
+	
+	    	$(document).on("click", ".reportsbtn", function() {
+		
+		$(".paulund_block_page").remove();
+        GetCustomerDetails();
+		LoadSection("reports");
 
 	});
 	
@@ -2012,6 +2037,7 @@ function hideAll(){
 	$(".homepage").hide();
 	$(".invoice").hide();
     $(".customerspage").hide();
+	$(".reports").hide();
 	
 }
 
@@ -2360,6 +2386,13 @@ $.ajax({
 	
 }
 
+function initializeDatePickers(){
+	
+	//initialize date pickers
+	$( ".datepicker" ).datepicker({showButtonPanel: true});
+	
+}
+
 
 function sortCustomers(order,ascdes,parent) {
 
@@ -2435,3 +2468,47 @@ $(removerows).remove();
   });
   }
 }
+
+ function validateReportDates(startdatetextbox,enddatetextbox){
+	 
+	 if (startdatetextbox.val() == ""){
+		 
+		startdatetextbox.addClass("inputerror");
+		return false;
+	
+	}else{
+		
+		startdatetextbox.removeClass("inputerror"); 
+		
+	 }
+	 
+	 if (enddatetextbox.val() == ""){
+		 
+		 enddatetextbox.addClass("inputerror");
+		 return false;
+		 
+	 }else{
+		 
+		 enddatetextbox.removeClass("inputerror");
+	 
+	 }	 
+	 
+	 var startdate = new Date(startdatetextbox.val());
+	 var enddate = new Date(enddatetextbox.val());
+	 
+	 if(enddate<startdate){
+		 
+		 startdatetextbox.addClass("inputerror");
+		 enddatetextbox.addClass("inputerror");
+		 
+		 return false;
+		 
+	 }else{
+		 
+		 startdatetextbox.removeClass("inputerror"); 
+		 enddatetextbox.removeClass("inputerror");
+	 }
+	 
+	 return true;
+	 
+ }

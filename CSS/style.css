@@ -667,7 +667,7 @@ display:none;
 
 .homepage{
 	
-	background-color: #FDFDFD;
+background-color: #FDFDFD;
 padding:10px;
 width: 100%;
 margin-bottom: 10px;
@@ -675,7 +675,7 @@ margin-bottom: 10px;
 	
 }
 
-.customerspage{
+.customerspage,.reports{
 	
 	background-color: #FDFDFD;
 padding:10px;

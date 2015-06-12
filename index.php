@@ -10,7 +10,7 @@
 <head>
 
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 <title>Invoice Management</title>
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
@@ -18,12 +18,14 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script src="http://hayageek.github.io/jQuery-Upload-File/jquery.uploadfile.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script src="Scripts/scripts.js"></script>
 <script src="Scripts/jquery.paulund_modal_box.js"></script>
 <link rel="stylesheet" type="text/css" href="CSS/style.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="CSS/uploadfile.min.css" media="screen" />
 <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
 
 </head>
@@ -47,6 +49,9 @@
                 </li>
 				<li>
                     <div class="customersbtn link" href="#"><img src="images/customer.png" /><span class=" customanchor">Customers</span></div>
+                </li>
+				<li>
+                    <div class="reportsbtn link" href="#"><img src="images/reports.png" /><span class=" customanchor">Reports</span></div>
                 </li>
                 <li>
                     <div class="categoriesbtn link" href="#"><img src="images/list91.png" /><span class=" customanchor">Products</span></div>
@@ -269,6 +274,17 @@
 
 </div>
 
+<div class="reports">
+
+<div class="text-center"><h3>Job Profitability Summary</h3></div>
+<h5>Start Date:&nbsp;</h5>
+<input type="text" id="startdate" style="margin-left:0!important" class="datepicker"/>
+<h5>End Date:&nbsp;</h5>
+<input type="text" id="enddate" style="margin-left:0!important" class="datepicker"/>
+<br/><br/>
+<a data-ajax-target="getreports" target="_blank" class="pure-button pure-button-primary">Get Report</a>
+</div>
+
 <span class="saved_modal"></span>
 <span class="saved_modal_settings"></span>
 <span class="save_modal_category"></span>
@@ -296,6 +312,7 @@
 	<div class="link createbtn"><img src="images/edit46.png" /><span class="customanchor">Create</span></div>
 	<div class="link transactionsbtn"><img src="images/statistical.png" /><span class="customanchor">Transactions</span></div>
 	<div class="link customersbtn"><img src="images/customer.png" /><span class="customanchor">Customers</span></div>
+	<div class="link reportsbtn"><img src="images/reports.png" /><span class="customanchor">Reports</span></div>
 	<div class="link categoriesbtn"><img src="images/list91.png" /><span class="customanchor">Products</span></div>
 	<div class="link settingsbtn"><img src="images/settings51.png" /><span class="customanchor">Settings</span></div>
 
