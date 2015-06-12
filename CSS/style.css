@@ -218,13 +218,6 @@ float: left;
 
 @media (min-width:401px){	
 
-
-.customerinvoicesearch{
-
-text-align:center;
-
-}
-
 .customers{
 
 display:inline-block; margin-top:-10px;display:none;word-break:break-all;
@@ -277,12 +270,6 @@ background-color:#FAFAFA;
 
 @media (max-width:400px){
 
-.customerinvoicesearch{
-
-text-align:left;
-
-
-}
 
 .pure-table td, .pure-table th{
 
@@ -349,7 +336,7 @@ width: 80%!important;
 height: 32px;
 border: 1px solid #ccc;
 color: #999;
-margin-left:0px!important;
+margin-left:15px;
 margin-bottom:5px;
 padding: 5px;
 background-color:#FAFAFA;
@@ -1200,4 +1187,8 @@ width:100%!important;
 
 }
 
+.customerinvoicesearch{
 
+text-align:center;
+
+}
