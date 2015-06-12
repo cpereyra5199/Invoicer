@@ -30,7 +30,7 @@ $pdf->AddPage();
 
 // header
 $html = '<div style="text-align:center;">
-<h1>CGS Contractors LLC Jobs</h1>
+<h2>CGS Contractors LLC Jobs</h2>
 <h1>Job Profitability Summary</h1>
 <h3>'.$startdate.'&nbsp;-&nbsp;'.$enddate.'</h3>
 <hr/>
@@ -45,7 +45,7 @@ for($i = 0; $i<count($ReportItems);$i++){
 	$revenue=0;
 	$cost=0;
 	
-	$html= $html.'<h3>'.$ReportItems[$i]["Name"].'</h3>';
+	$html= $html.'<h4>'.$ReportItems[$i]["Name"].'</h4>';
 
 	$html = $html.'<table cellspacing="1.5" cellpadding="1.5">
 		<tr>
