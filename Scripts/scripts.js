@@ -13,6 +13,32 @@ $(document).ready(function() {
 	
  
  
+ $(document).on("mouseover","h4[data-ajax-target='createinvoiceexpenses']",function(){	 
+	  
+ $(".itemrow").each(function() {
+ 
+		if($(this).find(".hiddenexpense").val() == 1){
+			
+			$(this).addClass("expensehue");
+		}
+ });
+ 
+ });
+ 
+  $(document).on("mouseout","h4[data-ajax-target='createinvoiceexpenses']",function(){	 
+	  
+ $(".itemrow").each(function() {
+			
+		$(this).removeClass("expensehue");
+		
+ });
+ 
+ });
+ 
+ 
+ 
+
+ 
  $(document).on('click',"a[data-ajax-target='getreports']",function(){
 	 
 	 var startdatetextbox = $("#startdate");
@@ -377,8 +403,8 @@ e.preventDefault();
 
 		$('.payInvoice_modal').paulund_modal_box_confirm({
 
-		title : 'Confirm Payment',
-		description : 'Are you sure payment has been received for this invoice?',
+		title : 'Enter Payment',
+		description : 'Please enter payment amount',
 		yescallback:PayInvoice,
 		invoiceid:invoiceid
 
@@ -554,6 +580,7 @@ e.preventDefault();
 			element.find(".price").val("");
 			element.find(".itemname").val("");
 			element.find(".hiddentax").val("0");
+			element.find(".hiddenexpense").val("0");
 			element.find(".tax").prop('checked', false);
 			element.find(".expense").prop('checked', false);
 			element.find(".itemid").val("");
@@ -572,6 +599,8 @@ e.preventDefault();
 			element.find(".expense").prop('checked', false);
 			element.find(".itemname").val("");
 			element.find(".itemid").val("");
+			element.find(".hiddentax").val("0");
+			element.find(".hiddenexpense").val("0");
 
 			element.insertAfter($(elementname));
 
@@ -773,13 +802,19 @@ $(document).on("click", ".homebtn", function() {
 function calculateTotal() {
 
 	var sum = new Number(0.00);
+	var expensesum = new Number(0.00);
 	tax = new Number(($(".taxrate").val()) / 100);
 
 	var totaltax = new Number(0.00);
 	var subtotal = new Number(0.00);
+	
+	var expensetotal = new Number(0.00);
 
 	$(".itemrow").each(function() {
 
+	
+		if(!$(this).find(".expense").is(':checked')){
+	
 		var number = new Number($(this).find(".price").val()).toFixed(2) * $(this).find(".quantity").val();
 		subtotal += Number(number);
 
@@ -798,12 +833,37 @@ function calculateTotal() {
 		totaltax += itemtax;
 
 		sum = Number(sum) + Number(number) + itemtax;
+		
+	}else{
+		
+		var number = new Number($(this).find(".price").val()).toFixed(2) * $(this).find(".quantity").val();
 
+		if (!$(this).find(".tax").is(':checked')) {
+
+			tax = new Number(0.00);
+
+		} else {
+
+			tax = new Number(($(".taxrate").val()) / 100);
+
+		}
+
+		itemtax = (Number(number) * tax);
+
+		totaltax += itemtax;
+
+		expensesum = Number(expensesum) + Number(number) + itemtax;	
+		
+		
+	}
 	});
 
 	$(".totalsum").html("$" + sum.toFixed(2));
 	$(".totaltaxes").html("$" + totaltax.toFixed(2));
 	$(".subtotalsum").html("$" + subtotal.toFixed(2));
+	$(".expensestotal").html("$" + expensesum.toFixed(2));
+	$("span[data-ajax-target='createinvoicenet']").html("$"+ Number(subtotal-expensesum).toFixed(2));
+	
 }
 
 function GetCategories() {
@@ -865,7 +925,7 @@ function GetSentInvoices(date) {
 			 
 				if(this.title!=''){title = "&nbsp;-&nbsp;"+this.title;}
 	   
-				$(".invoicessent").append('<div class="invoicerow"><div class="innerrow"><div style="text-align:center;width:100%!important" class="innercolumn"><span class="invoiceheader">Invoice ID - #&nbsp;</span><span class="rowinvoiceid" style="font-weight:bold">' + this.invoiceID + '</span>'+title+'</div>' + '<div class="innercolumn"><span class="invoiceheader">Name</span>&nbsp;<span class="invoicerowname" style="font-weight:bold">' + this.clientname + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Address</span>&nbsp;' + this.clientstreetaddress + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Location</span>&nbsp;' + this.clientcitystatezip + '</div>' + '<div  class="innercolumn"><span class="invoiceheader">Invoice Total</span>&nbsp;<span class="invoicerowtotal" data-val="' + this.invoicetotal + '" style="color:green;font-weight:bold">$&nbsp;' + this.invoicetotal + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Email</span>&nbsp;<span class="invoicerowemail">' + this.clientemail + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Create Date</span>&nbsp;' + this.createddate + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Expires</span>&nbsp;' + this.expirationdate + '</div>' + '<div  class="innercolumn"><a target="_blank" href="Data/generatepdf/' + btoa("invoiceID=" + this.invoiceID) + '">View</a> | <span data-invoice-id="' + this.invoiceID + '" class="link resendinvoice">Re-send | </span><span data-invoice-id="' + this.invoiceID + '" class="link payinvoice">Pay</span></div>' + '</div></div>');
+				$(".invoicessent").append('<div class="invoicerow"><div class="innerrow"><div style="text-align:center;width:100%!important" class="innercolumn"><span class="invoiceheader">Invoice ID - #&nbsp;</span><span class="rowinvoiceid" style="font-weight:bold">' + this.invoiceID + '</span>'+title+'</div>' + '<div class="innercolumn"><span class="invoiceheader">Name</span>&nbsp;<span class="invoicerowname" style="font-weight:bold">' + this.clientname + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Address</span>&nbsp;' + this.clientstreetaddress + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Location</span>&nbsp;' + this.clientcitystatezip + '</div>' + '<div  class="innercolumn"><span class="invoiceheader">Invoice Total</span>&nbsp;<span class="invoicerowtotal" data-val="' + this.invoicetotal + '" style="color:green;font-weight:bold">$&nbsp;' + this.invoicetotal + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Email</span>&nbsp;<span class="invoicerowemail">' + this.clientemail + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Create Date</span>&nbsp;' + this.createddate + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Expires</span>&nbsp;' + this.expirationdate + '</div>' + '<div  class="innercolumn"><a target="_blank" href="Data/generatepdf/' + btoa("invoiceID=" + this.invoiceID) + '">View</a> | <span data-invoice-id="' + this.invoiceID + '" class ="link loadinvoice">Load</span> | <span data-invoice-id="' + this.invoiceID + '" class="link resendinvoice">Re-send | </span><span data-invoice-id="' + this.invoiceID + '" class="link payinvoice">Pay</span></div>' + '</div></div>');
 
 				senttotals += Number(this.invoicetotal);
 
@@ -1035,7 +1095,7 @@ function GetPaidInvoices(date) {
 			 
 				if(this.title!=''){title = "&nbsp;-&nbsp;"+this.title;}
 			
-				$(".invoicepaid").append('<div class="invoicerow"><div class="innerrow"><div style="text-align:center;width:100%!important" class="innercolumn"><span class="invoiceheader">Estimate ID - #&nbsp;</span><span class="rowinvoiceid" style="font-weight:bold">' + this.invoiceID + '</span>'+title+'</div><div class="innercolumn"><span class="invoiceheader">Name</span>&nbsp;<span class="invoicerowname"  style="font-weight:bold">' + this.clientname + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Address</span>&nbsp;' + this.clientstreetaddress + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Location</span>&nbsp;' + this.clientcitystatezip + '</div>' + '<div  class="innercolumn"><span class="invoiceheader">Invoice Total</span>&nbsp;<span class="invoicerowtotal" data-val="' + this.invoicetotal + '" style="color:green;font-weight:bold">$&nbsp;' + this.invoicetotal + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Email</span>&nbsp;<span class="invoicerowemail">' + this.clientemail + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Created Date</span>&nbsp;' + this.createddate + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Paid</span>&nbsp;<span style="color:green;font-weight:bold">' + this.paiddate + '</span></div>' + '<div  class="innercolumn"><a target="_blank" href="Data/generatepdf/' + btoa("invoiceID=" + this.invoiceID) + '">View</a> | <span data-invoice-id="' + this.invoiceID + '" class="link sendsavedinvoice">Send</span></div>' + '</div></div>');
+				$(".invoicepaid").append('<div class="invoicerow"><div class="innerrow"><div style="text-align:center;width:100%!important" class="innercolumn"><span class="invoiceheader">Estimate ID - #&nbsp;</span><span class="rowinvoiceid" style="font-weight:bold">' + this.invoiceID + '</span>'+title+'</div><div class="innercolumn"><span class="invoiceheader">Name</span>&nbsp;<span class="invoicerowname"  style="font-weight:bold">' + this.clientname + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Address</span>&nbsp;' + this.clientstreetaddress + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Location</span>&nbsp;' + this.clientcitystatezip + '</div>' + '<div  class="innercolumn"><span class="invoiceheader">Invoice Total</span>&nbsp;<span class="invoicerowtotal" data-val="' + this.invoicetotal + '" style="color:green;font-weight:bold">$&nbsp;' + this.invoicetotal + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Email</span>&nbsp;<span class="invoicerowemail">' + this.clientemail + '</span></div>' + '<div class="innercolumn"><span class="invoiceheader">Created Date</span>&nbsp;' + this.createddate + '</div>' + '<div class="innercolumn"><span class="invoiceheader">Paid</span>&nbsp;<span style="color:green;font-weight:bold">' + this.paiddate + '</span></div>' + '<div  class="innercolumn"><a target="_blank" href="Data/generatepdf/' + btoa("invoiceID=" + this.invoiceID) + '">View</a> | <span data-invoice-id="' + this.invoiceID + '" class ="link loadinvoice">Load</span> | <span data-invoice-id="' + this.invoiceID + '" class="link sendsavedinvoice">Send</span></div>' + '</div></div>');
 				paidtotals += Number(this.invoicetotal);
 			});
 
@@ -1342,7 +1402,8 @@ function ResendInvoice(invoiceid) {
 
 }
 
-function PayInvoice(invoiceid) {
+function PayInvoice(invoiceid,amount) {
+
 
 $("#customloader").show();
 
@@ -1352,6 +1413,7 @@ $("#customloader").show();
 		url : "Data/DataModel.php",
 		data : {
 			InvoiceID : invoiceid,
+			Amount: amount,
 			PayInvoice : "true"
 		}
 	}).done(function(data) {
@@ -1515,7 +1577,7 @@ function LoadInvoice(invoiceid) {
 	}).done(function(data) {
 
 		var invoice = JSON.parse(data);
-
+		
 		$("input[name='clientname']").val(invoice.clientname);
 		$("input[name='clientemail']").val(invoice.clientemail);
 		$("input[name='clientstreetaddress']").val(invoice.clientstreetaddress);
@@ -1536,6 +1598,12 @@ function LoadInvoice(invoiceid) {
 		$(".createcopydiv").css('display','inline-block');
 		
 		LoadInvoiceItems(invoiceid);
+		
+		if(invoice.EmailSent==1 && invoice.paid == 0){
+		$("div[data-ajax-target='invoicebuttons'] > .payinvoice").remove();
+		$("div[data-ajax-target='invoicebuttons']").append("<span style='margin-right:10px' class='link payinvoice postbuttons' data-invoice-id='"+invoice.invoiceID+"'>Make Payment</span>");
+		
+		}
 
 	});
 

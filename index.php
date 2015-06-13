@@ -190,15 +190,39 @@
 </div>
 </div>
 <span class="link additem">Add Item</span>
-<h4 style="text-align:right;margin-right:10px">Subtotal&nbsp;-&nbsp;<span class="subtotalsum">$0.00</span></h4>
-<h4 style="text-align:right;margin-right:10px">Tax&nbsp;-&nbsp;<span class="totaltaxes">$0.00</span></h4>
-<h4 style="text-align:right;margin-right:10px">Total&nbsp;-&nbsp;<span class="totalsum">$0.00</span></h4>
+
+<div class="pure-form pure-form-aligned text-right">
+
+<div class="pure-control-group">
+<h4>Subtotal&nbsp;-&nbsp;<span class="subtotalsum">$0.00</span></h4>
+</div>
+
+<div class="pure-control-group">
+<h4>Tax&nbsp;-&nbsp;<span class="totaltaxes">$0.00</span></h4>
+</div>
+
+<div class="pure-control-group">
+<h4>Total&nbsp;-&nbsp;<span class="totalsum">$0.00</span></h4>
+</div>
+<br/>
+<div class="pure-control-group negativenet">
+<h4 class="display-initial" data-ajax-target="createinvoiceexpenses">Expenses&nbsp;-&nbsp;<span class="expensestotal">$0.00</span></h4>
+</div>
+
+<div class="pure-control-group">
+<h4>Net&nbsp;-&nbsp;<span data-ajax-target="createinvoicenet">$0.00</span></h4>
+</div>
 
 
-<div style="margin:20px">
+</div>
+
+<br/>
+
+
+<div style="margin:20px" data-ajax-target="invoicebuttons">
 <span style="margin-right:10px" class="link saveinvoicebtn postbuttons">Save Estimate</span>
 <span style="margin-right:10px" class="link generateinvoicebtn postbuttons">Generate Invoice</span>
-<span class="link  postbuttons" onclick="clearForm()">Clear</span>
+<span style="margin-right:10px" class="link  postbuttons" onclick="clearForm()">Clear</span>
 </div>
 
 </div>

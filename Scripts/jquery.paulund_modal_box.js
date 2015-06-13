@@ -159,8 +159,8 @@
 			left: "50%",
 			yescallback:"",
 			nocallback:"",
-			YesText:"Yes",
-			NoText:"No",
+			YesText:"Pay",
+			NoText:"Cancel",
 			invoiceid:""
 		},prop);
 
@@ -185,7 +185,7 @@
 
 		$(".yesclick").click(function(){
 			
-			options.yescallback(options.invoiceid);
+			options.yescallback(options.invoiceid,$("#paymentamount").val());
 			
 		});
 		
@@ -296,7 +296,7 @@
 		  */
 		 function add_popup_box(){
 			 
-			 var pop_up = $('<div class="paulund_modal_box"><a href="" onclick="return false" class="paulund_modal_close"></a><div class="paulund_inner_modal_box"><h2>' + options.title + '</h2><p>' + options.description + '</p><br/><br/><div class="confirmationbuttons"><span class="yesclick">'+options.YesText+'</span>&nbsp;<span class="noclick">'+options.NoText+'</span></div></div></div>');
+			 var pop_up = $('<div class="paulund_modal_box"><a href="" onclick="return false" class="paulund_modal_close"></a><div class="paulund_inner_modal_box"><h2>' + options.title + '</h2><p>' + options.description + '</p><div><input type="text" class="text-right" id="paymentamount"/></div><div class="confirmationbuttons"><span class="yesclick">'+options.YesText+'</span>&nbsp;<span class="noclick">'+options.NoText+'</span></div></div></div>');
 			 $(pop_up).appendTo('.paulund_block_page');
 			 			 
 			 $('.paulund_modal_close').click(function(){

@@ -64,7 +64,7 @@ else if (isset($_GET["GetSettings"])) {
 
 } else if (isset($_POST["PayInvoice"]) && isset($_POST["InvoiceID"])){
 	
-	PayInvoice($_POST["InvoiceID"]);
+	PayInvoice($_POST["InvoiceID"],$_POST["Amount"]);
 }
 else if (isset($_GET["GetHomPageData"])){
 	
@@ -555,19 +555,19 @@ function GetInvoices($sentorsavedExpired,$date) {
 
 	if ($sentorsavedExpired == "sent") {
 
-		$query = "select invoices.InvoiceTitle,invoices.Paid,invoices.PaidDate,invoices.ID,Name as ClientName, StreetAddress as ClientStreetAddress,CONCAT(CityState,' ',ZipCode) as ClientCityStateZip, SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount, Email, DateTime, ExpirationDate, EmailSent from `invoices` invoices inner join `invoiceitem` item on item.InvoiceID = invoices.ID inner join `customer` c on c.ID = invoices.CustomerID where EmailSent=1 AND ExpirationDate>NOW() and Paid=0 AND $date[0] = MONTH(DateTime) AND $date[1] = YEAR(DateTime) GROUP BY ID ORDER BY DateTime DESC, invoices.ID DESC";
+		$query = "select invoices.InvoiceTitle,invoices.Paid,invoices.PaidDate,invoices.ID,Name as ClientName, StreetAddress as ClientStreetAddress,CONCAT(CityState,' ',ZipCode) as ClientCityStateZip, SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount, Email, DateTime, ExpirationDate, EmailSent from `invoices` invoices inner join `invoiceitem` item on item.InvoiceID = invoices.ID and item.Expense = 0 inner join `customer` c on c.ID = invoices.CustomerID where EmailSent=1 AND ExpirationDate>NOW() and Paid=0 AND $date[0] = MONTH(DateTime) AND $date[1] = YEAR(DateTime) GROUP BY ID ORDER BY DateTime DESC, invoices.ID DESC";
 
 	} else if ($sentorsavedExpired=="saved") {
 
-		$query = "select invoices.InvoiceTitle,invoices.Paid,invoices.PaidDate,invoices.ID,Name as ClientName, StreetAddress as ClientStreetAddress,CONCAT(CityState,' ',ZipCode) as ClientCityStateZip, SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount, Email, DateTime, ExpirationDate, EmailSent from `invoices` invoices inner join `invoiceitem` item on item.InvoiceID = invoices.ID inner join `customer` c on c.ID = invoices.CustomerID where EmailSent=0 AND Paid=0 AND $date[0] = MONTH(DateTime) AND $date[1] = YEAR(DateTime) GROUP BY ID ORDER BY DateTime DESC, ID DESC";
+		$query = "select invoices.InvoiceTitle,invoices.Paid,invoices.PaidDate,invoices.ID,Name as ClientName, StreetAddress as ClientStreetAddress,CONCAT(CityState,' ',ZipCode) as ClientCityStateZip, SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount, Email, DateTime, ExpirationDate, EmailSent from `invoices` invoices inner join `invoiceitem` item on item.InvoiceID = invoices.ID and item.Expense = 0 inner join `customer` c on c.ID = invoices.CustomerID where EmailSent=0 AND Paid=0 AND $date[0] = MONTH(DateTime) AND $date[1] = YEAR(DateTime) GROUP BY ID ORDER BY DateTime DESC, ID DESC";
 
 	}else if ($sentorsavedExpired=="expired"){
 			
-		$query = "select invoices.InvoiceTitle,invoices.Paid,invoices.PaidDate,invoices.ID,Name as ClientName, StreetAddress as ClientStreetAddress,CONCAT(CityState,' ',ZipCode) as ClientCityStateZip, SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount, Email, DateTime, ExpirationDate, EmailSent from `invoices` invoices inner join `invoiceitem` item on item.InvoiceID = invoices.ID inner join `customer` c on c.ID = invoices.CustomerID where ExpirationDate <= NOW() and Paid=0 and EmailSent=1 AND $date[0] = MONTH(DateTime) AND $date[1] = YEAR(DateTime) GROUP BY ID ORDER BY DateTime DESC, invoices.ID DESC";
+		$query = "select invoices.InvoiceTitle,invoices.Paid,invoices.PaidDate,invoices.ID,Name as ClientName, StreetAddress as ClientStreetAddress,CONCAT(CityState,' ',ZipCode) as ClientCityStateZip, SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount, Email, DateTime, ExpirationDate, EmailSent from `invoices` invoices inner join `invoiceitem` item on item.InvoiceID = invoices.ID and item.Expense = 0 inner join `customer` c on c.ID = invoices.CustomerID where ExpirationDate <= NOW() and Paid=0 and EmailSent=1 AND $date[0] = MONTH(DateTime) AND $date[1] = YEAR(DateTime) GROUP BY ID ORDER BY DateTime DESC, invoices.ID DESC";
 		
 	}else if ($sentorsavedExpired=="paid"){
 			
-		$query = "select invoices.InvoiceTitle,invoices.Paid,invoices.PaidDate,invoices.ID,Name as ClientName, StreetAddress as ClientStreetAddress,CONCAT(CityState,' ',ZipCode) as ClientCityStateZip, SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount, Email, DateTime, ExpirationDate, EmailSent from `invoices` invoices inner join `invoiceitem` item on item.InvoiceID = invoices.ID inner join `customer` c on c.ID = invoices.CustomerID where Paid=1 AND $date[0] = MONTH(DateTime) AND $date[1] = YEAR(DateTime) GROUP BY ID ORDER BY DateTime DESC, invoices.ID DESC";
+		$query = "select invoices.InvoiceTitle,invoices.Paid,invoices.PaidDate,invoices.ID,Name as ClientName, StreetAddress as ClientStreetAddress,CONCAT(CityState,' ',ZipCode) as ClientCityStateZip, SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount, Email, DateTime, ExpirationDate, EmailSent from `invoices` invoices inner join `invoiceitem` item on item.InvoiceID = invoices.ID and item.Expense = 0 inner join `customer` c on c.ID = invoices.CustomerID where Paid=1 AND $date[0] = MONTH(DateTime) AND $date[1] = YEAR(DateTime) GROUP BY ID ORDER BY DateTime DESC, invoices.ID DESC";
 		
 	}
 		
@@ -1044,14 +1044,19 @@ if ($invoice["EmailSent"]=="1" && $invoice["paid"]=="1"){
 	
 }
 
-function PayInvoice($invoiceID){
+function PayInvoice($invoiceID,$amount){
 		
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
-	
-	$query = "update `invoices` Set Paid=1, PaidDate=NOW() where ID =" . $invoiceID;
 
+	$query = "insert into `payments` (InvoiceID, Amount) values(".$invoiceID.",".$amount.")";
+	
 	mysql_query($query);
+	
+	
+	//$query = "update `invoices` Set Paid=1, PaidDate=NOW() where ID =" . $invoiceID;
+
+	//mysql_query($query);
 		
 	
 }

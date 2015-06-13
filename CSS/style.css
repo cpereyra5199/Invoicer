@@ -1117,56 +1117,56 @@ padding:15px;
 
 .headerexpired{
 
-background-color:#F2353D;
-color:white;
+background-color:#F2353D!important;
+color:white!important;
 
 }
 
 .headerlighterblue{
 
-background-color:#008ADF;
-color:white;
+background-color:#008ADF!important;
+color:white!important;
 
 }
 
 .headerblue{
 
-background-color:#193048;
-color:white;
+background-color:#193048!important;
+color:white!important;
 
 }
 
 .negativenet{
 
-color:red;
+color:red!important;
 
 }
 
 .positivenet{
 
-color:green;
+color:green!important;
 
 }
 
 .expiredhue,.expensehue{
 
-background-color:#F2353D;
+background-color:#F2353D!important;
 
 }
 .paidhue,.incomehue{
 
-background-color:#53BC44;
+background-color:#53BC44!important;
 
 }
 .invoiceshue{
 
-background-color:#00B2FF;
+background-color:#00B2FF!important;
 
 }
 			
 .estimateshue{
 
-background-color:#FFBD20;
+background-color:#FFBD20!important;
 
 }
 
@@ -1175,7 +1175,7 @@ background-color:#FFBD20;
 
 .padding1{
 
-padding:5px;
+padding:5px!important;
 
 }
 
@@ -1189,6 +1189,12 @@ width:100%!important;
 
 .customerinvoicesearch{
 
-text-align:center;
+text-align:center!important;
+
+}
+
+.display-initial{
+
+display:initial!important;
 
 }
