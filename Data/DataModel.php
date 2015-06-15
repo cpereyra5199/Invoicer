@@ -208,7 +208,7 @@ function ProfitabilityReport($startdate,$enddate){
 		
 		array_push($fullarray,$customerarray);
 		
-		$query = "select i.ID,i.InvoiceTitle,ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2) as TotalAmount,  IFNULL(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2),0.00) as ExpenseTotal,(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2)-IFNULL(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2),0.00)) as Net from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID and it.Expense=0 left join `invoiceitem` expenses on expenses.InvoiceID = i.ID and expenses.Expense = 1 where i.CustomerID = ".$customerid." and i.Paid=1 GROUP BY i.ID order by i.ID asc";
+		$query = "select i.ID,i.InvoiceTitle,SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2)) as TotalAmount,  SUM(IFNULL(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2),0.00)) as ExpenseTotal,(SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2))-SUM(IFNULL(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2),0.00))) as Net from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID and it.Expense=0 left join `invoiceitem` expenses on expenses.InvoiceID = i.ID and expenses.Expense = 1 where i.CustomerID = ".$customerid." and i.Paid=1 GROUP BY i.ID order by i.ID asc";
 		
 		$innerresult = mysql_query($query);
 		
@@ -251,7 +251,7 @@ function GetCustomerInvoicesByID($customerid){
     mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
     
-	$query = "select SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2)) as TotalAmount,  IFNULL(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2),0.00) as ExpenseTotal,(SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2))-IFNULL(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2),0.00)) as Net,Paid,PaidDate,EmailSent,i.InvoiceTitle as Title, i.ID, DateTime, ExpirationDate,CustomerID,case when ExpirationDate < Now() and Paid=0 then 'Expired' when Paid = 1 then 'Paid' when EmailSent = 1 and Paid = 0 then 'Invoice Sent' when EmailSent=0 then 'Estimate Created' else 'OK' end as status from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID and it.Expense = 0 left join `invoiceitem` expenses on expenses.InvoiceID = i.ID and expenses.Expense = 1  where i.CustomerID=".$customerid." GROUP BY i.ID order by Datetime desc, i.id desc";
+	$query = "select SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2)) as TotalAmount,  IFNULL(SUM(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2)),0.00) as ExpenseTotal,(SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2))-IFNULL(SUM(ROUND(IF(expenses.Taxable = true, (expenses.ItemTotal*expenses.ItemQuantity)+((expenses.ItemTotal*expenses.ItemQuantity)*(expenses.Rate/100)), expenses.ItemTotal*expenses.ItemQuantity),2)),0.00)) as Net,Paid,PaidDate,EmailSent,i.InvoiceTitle as Title, i.ID, DateTime, ExpirationDate,CustomerID,case when ExpirationDate < Now() and Paid=0 then 'Expired' when Paid = 1 then 'Paid' when EmailSent = 1 and Paid = 0 then 'Invoice Sent' when EmailSent=0 then 'Estimate Created' else 'OK' end as status from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID and it.Expense = 0 left join `invoiceitem` expenses on expenses.InvoiceID = i.ID and expenses.Expense = 1  where i.CustomerID=".$customerid." GROUP BY i.ID order by Datetime desc, i.id desc";
 	$result = mysql_query($query);
     
     
@@ -722,8 +722,6 @@ function GetItemSettings($category) {
 
 }
 
-
-
 function GetCategories() {
 
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
@@ -1049,16 +1047,26 @@ function PayInvoice($invoiceID,$amount){
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
 
+	
 	$query = "insert into `payments` (InvoiceID, Amount) values(".$invoiceID.",".$amount.")";
 	
 	mysql_query($query);
 	
+	$query = "select SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2)) as TotalAmount, p.Amount AmountPaid from `invoices` i left join `invoiceitem` it on it.InvoiceID = i.ID left join (select sum(Amount) Amount,InvoiceID from `payments` p group by p.InvoiceID) as p on p.InvoiceID = i.ID where i.ID=".$invoiceID;
 	
-	//$query = "update `invoices` Set Paid=1, PaidDate=NOW() where ID =" . $invoiceID;
-
-	//mysql_query($query);
+	$result = mysql_query($query);
+	
+	$totalamount = mysql_result($result,0,"TotalAmount");
+	$totalpaid = mysql_result($result,0,"AmountPaid");
+	
+	if($totalpaid>=$totalamount){
 		
-	
+	$query = "update `invoices` Set Paid=1, PaidDate=NOW() where ID =" . $invoiceID;
+
+	mysql_query($query);
+		
+	}
+
 }
 
 function GetItemsID($invoiceID) {

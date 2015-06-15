@@ -161,7 +161,8 @@
 			nocallback:"",
 			YesText:"Pay",
 			NoText:"Cancel",
-			invoiceid:""
+			invoiceid:"",
+			totalamount:0.00
 		},prop);
 
 				
@@ -185,7 +186,17 @@
 
 		$(".yesclick").click(function(){
 			
+			var paymentamount = $("#paymentamount").val();
+			
+			if(isValidNumber(paymentamount)){
+				
 			options.yescallback(options.invoiceid,$("#paymentamount").val());
+			
+			}else{
+				
+				$("#paymentamount").addClass("inputerror");
+				
+			}
 			
 		});
 		
@@ -210,7 +221,7 @@
 			$('.confirmationbuttons span').css({
 				
 				
-				'padding':'20px',
+				'margin':'20px',
 				'font-size':'20px',
 				'cursor':'pointer'
 				
@@ -272,8 +283,6 @@
 			});
 			$('.paulund_inner_modal_box').css({
 				'background-color':'#fff',
-				'height':(options.height - 50) + 'px',
-				'width':(options.width - 50) + 'px',
 				'padding':'10px',
 				'margin':'15px',
 				'border-radius':'10px',
@@ -296,7 +305,7 @@
 		  */
 		 function add_popup_box(){
 			 
-			 var pop_up = $('<div class="paulund_modal_box"><a href="" onclick="return false" class="paulund_modal_close"></a><div class="paulund_inner_modal_box"><h2>' + options.title + '</h2><p>' + options.description + '</p><div><input type="text" class="text-right" id="paymentamount"/></div><div class="confirmationbuttons"><span class="yesclick">'+options.YesText+'</span>&nbsp;<span class="noclick">'+options.NoText+'</span></div></div></div>');
+			 var pop_up = $('<div class="paulund_modal_box"><a href="" onclick="return false" class="paulund_modal_close"></a><div class="paulund_inner_modal_box"><h2>' + options.title + '</h2><div><h4>Balance: '+options.totalamount+'</h4></div><p>' + options.description + '</p><div><input type="text" onkeypress="return isDecimal(event)" class="text-right" id="paymentamount"/></div><div class="confirmationbuttons"><span class="yesclick">'+options.YesText+'</span>&nbsp;<span class="noclick">'+options.NoText+'</span></div></div></div>');
 			 $(pop_up).appendTo('.paulund_block_page');
 			 			 
 			 $('.paulund_modal_close').click(function(){
