@@ -606,7 +606,8 @@ function GetInvoice($invoiceID, $returnjason) {
 
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
-	$query = "select SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount,Paid,PaidDate,EmailSent, i.InvoiceTitle, i.ID,Name, StreetAddress,CityState as ClientCityState,ZipCode,Email, DateTime, ExpirationDate,CustomerID from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID inner join `customer` c on c.ID = i.CustomerID  where i.ID=".$invoiceID." GROUP BY i.ID";
+	
+	$query = "select IFNULL(p.Amount,0.00) as PaymentAmount,(SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2))-IFNULL(p.Amount,0.00)) as Balance, SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount,Paid,PaidDate,EmailSent, i.InvoiceTitle, i.ID,Name, StreetAddress,CityState as ClientCityState,ZipCode,Email, DateTime, ExpirationDate,CustomerID from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID inner join `customer` c on c.ID = i.CustomerID left join (select sum(Amount) Amount,InvoiceID from `payments` p group by p.InvoiceID) as p on p.InvoiceID = i.ID  where i.ID=".$invoiceID." GROUP BY i.ID";
 
 	$result = mysql_query($query);
     
@@ -634,7 +635,9 @@ function GetInvoice($invoiceID, $returnjason) {
 	    "totalamount"=>$row["TotalAmount"],
 		"customerid"=>$row["CustomerID"],
 	    "expirationdatecount" => $interval -> format("%a"),
-		"invoicetitle" => $row["InvoiceTitle"]);
+		"invoicetitle" => $row["InvoiceTitle"],
+		"balance"=>$row["Balance"],
+		"paymentamount"=>$row["PaymentAmount"]);
 
 	}
 

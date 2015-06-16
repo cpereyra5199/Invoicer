@@ -204,6 +204,17 @@
 <div class="pure-control-group">
 <h4>Total&nbsp;-&nbsp;<span class="totalsum">$0.00</span></h4>
 </div>
+
+<br/>
+
+<div class="pure-control-group">
+<h4>Payments&nbsp;-&nbsp;<span data-ajax-target="paymentamount">$0.00</span></h4>
+</div>
+
+<div class="pure-control-group">
+<h4>Balance&nbsp;-&nbsp;<span data-ajax-target="invoicebalance">$0.00</span></h4>
+</div>
+
 <br/>
 <div class="pure-control-group negativenet">
 <h4 class="display-initial" data-ajax-target="createinvoiceexpenses">Expenses&nbsp;-&nbsp;<span class="expensestotal">$0.00</span></h4>

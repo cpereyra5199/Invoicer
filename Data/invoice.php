@@ -142,7 +142,7 @@ function AddLogo($url){
 $x1= 10;
 $y1 = 6;
 
-$this->Image($url,$x1,$y1,40,25);
+$this->Image($url,$x1,$y1,45,30);
 
 }
 

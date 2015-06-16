@@ -92,7 +92,7 @@ $pdf->writeHTML($html, true, false, true, false, '');
 
 
 //Close and output PDF document
-$pdf->Output('example_006.pdf', 'I');
+$pdf->Output('profitreport'.$startdate.'-'.$enddate.'.pdf', 'I');
  
  }else{
 	 
