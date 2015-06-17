@@ -69,7 +69,9 @@ $pdf->SetLineItems($LineItems);
 
 $pdf->AddDocumentInfoTop();
 
-return $pdf->OutputInvoiceAttachment();
+$pdf->OutputInvoiceAttachment();
+
+return $_SERVER['DOCUMENT_ROOT'].'/Invoicer/sentinvoices/invoice'.$invoiceID.'.pdf';
 	
 }
 
@@ -152,7 +154,7 @@ $mail->MsgHTML($message);
 
 $attachment = GeneratePDF($invoiceid);
 
-$mail->AddStringAttachment($attachment,$doctype."_".$invoiceid.".pdf");      // attachment
+$mail->AddAttachment($attachment);
 
 if(!$mail->Send()) {
 echo "Mailer Error: " . $mail->ErrorInfo;

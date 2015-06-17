@@ -1479,8 +1479,6 @@ function SendSavedInvoice(invoiceid) {
 			InvoiceID : invoiceid
 		}
 	}).done(function(data) {
-
-	alert(data);
 	
 		GetSentInvoices();
 		generateModals();

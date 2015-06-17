@@ -293,6 +293,7 @@ function OutputInvoicePDF(){
 function OutputInvoiceAttachment(){
 	
 	global $html;
+	global $invoiceid;
 
 	$this->writeHTML($html, true, false, true, false, '');
 	
@@ -300,8 +301,7 @@ function OutputInvoiceAttachment(){
 	$this->SetY($this->getPageHeight()-45);
 	}
 	$this->writeHTML($this->AddTotals(), true, false, true, false, '');
-	
-	$this->Output('invoice.pdf', 'S');
+	$this->Output($_SERVER['DOCUMENT_ROOT'].'/Invoicer/sentinvoices/invoice'.$invoiceid.'.pdf', 'F');
 }
 
 	
