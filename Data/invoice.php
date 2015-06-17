@@ -248,23 +248,26 @@ function AddDocumentInfoTop(){
 }
 
 function AddTotals(){
-	
+
+	global $subtotal;
+	global $taxtotal;
+
 	$totals = '<table><tr>
 	<td></td>
 	<td></td>
 	<td><table cellpadding="1">
 	<tr>
 	<td style="font-size:9px;border-left:1px solid black;border-top:1px solid black">SUBTOTAL</td>
-	<td style="font-size:9px;text-align:right;color:#646464;border-right:1px solid black;border-top:1px solid black">4000.00</td>
+	<td style="font-size:9px;text-align:right;color:#646464;border-right:1px solid black;border-top:1px solid black">'.number_format($subtotal,2).'</td>
 	</tr>
 	<tr>
 	<td style="font-size:9px; border-bottom:1px solid black;border-left:1px solid black;">TAXES</td>
-	<td style="font-size:9px; border-bottom:1px solid black;text-align:right;color:#646464;border-right:1px solid black">0.00</td>
+	<td style="font-size:9px; border-bottom:1px solid black;text-align:right;color:#646464;border-right:1px solid black">'.number_format($taxtotal,2).'</td>
 	</tr>
 	<tr style="background-color:#C0C0C0"><td style="border-left:1px solid black;"></td><td style="border-right:1px solid black"></td></tr>
 	<tr style="background-color:#C0C0C0">
 	<td style="font-size:11px;border-left:1px solid black;border-bottom:1px solid black">TOTAL</td>
-	<td style="font-size:11px; text-align:right;border-bottom:1px solid black;border-right:1px solid black">4000.00</td>
+	<td style="font-size:11px; text-align:right;border-bottom:1px solid black;border-right:1px solid black">'.number_format(($subtotal+$taxtotal),2).'</td>
 	</tr>
 	</table>
 	</td>
