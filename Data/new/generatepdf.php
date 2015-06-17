@@ -2,7 +2,7 @@
 
 //add code here to check if invoice is expired
 
-require('invoicehtml.php');
+require('invoice.php');
 
 $querystring = base64_decode($_SERVER['QUERY_STRING']);
 

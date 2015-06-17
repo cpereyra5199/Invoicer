@@ -12,98 +12,80 @@ parse_str($querystring, $querysrings);
  if(isset($querysrings["invoiceID"])){
 	 
 $invoiceID = $querysrings["invoiceID"]; 
+	
+// create new PDF document
+$pdf = new InvoiceHTML(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+$pdf->SetPrintHeader(false);
+$pdf->SetPrintFooter(false);
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP-20, PDF_MARGIN_RIGHT);
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+// set font
+$pdf->SetFont('helvetica', '', 10);
+
+// add a page
+$pdf->AddPage();
+$pdf->SetLogoUrl('../images/logo.png');
+
 $settings = GetSettingsArray();
 $client = GetInvoice($invoiceID,"false");
 $LineItems = GetLineItems($invoiceID,"false");
-$images = GetImagesForInvoice($invoiceID);
-	 
-$itemcolumn = "ITEM";
-$itemdescription="DESCRIPTION";
-$itemquantity="QUANTITY";
-$itemtotal = "LINE TOTAL";
 
-$pdf = new PDF_Invoice( 'P', 'mm', 'A4' );
-$pdf->SetTextColor(100,100,100);
-$pdf->AddPage();
-$pdf->AddCompany( "",
-                  $settings["streetaddress"]."\n".
-                  $settings["citystate"]."\n".
-				  $settings["zipcode"]);
-				  
-				 
-$pdf->AddLogo("../images/logo.png");
+$pdf->SetInvoiceID($invoiceID);
 
-	  
+$companyaddress = array(
 
+"street" => $settings["streetaddress"],
+"citystate" =>$settings["citystate"],
+"zipcode" => $settings["zipcode"]
 
+);
+
+$pdf->SetCompanyInfo($settings["companyname"],$companyaddress);
+
+$clientaddress = array(
+
+"street" => $client["clientstreetaddress"],
+"citystate" =>$client["clientcitystate"],
+"zipcode" => $client["clientzip"]
+
+);
+
+$pdf->SetClientInfo($client["clientname"],$clientaddress);
 
 if($client["paid"]=="1"){
 
-$pdf->addClient($client["invoiceID"],"RECEIPT");
-$pdf->AddDocumentName("RECEIPT");
-$pdf->stamp("PAID");
+$pdf->SetDocumentName("RECEIPT");
 $date = strtotime($client["paiddate"]);
 	
 }else{
 	
-	$pdf->addClient($client["invoiceID"],$client["EmailSent"]==1? "INVOICE":"ESTIMATE");
-	$pdf->AddDocumentName($client["EmailSent"]==1? "INVOICE":"ESTIMATE");	  
-    $date = strtotime($client["createddate"]);
+$pdf->SetDocumentName($client["EmailSent"]==1? "INVOICE":"ESTIMATE");
+$date = strtotime($client["createddate"]);
+
 }
 
-$pdf->addDate(date("m-d-y",$date ));
-
-
-$pdf->addClientInfo($client["clientname"],$client["clientstreetaddress"]."\n".$client["clientcitystate"]."\n".$client["clientzip"],$client["invoicetitle"]);
+$pdf->SetDate(date("m-d-y",$date));
 
 $date = strtotime($client["expirationdate"]);
 
-$pdf->addExpirationDate(date("m-d-y",$date ));
+$pdf->SetExpirationDate(date("m-d-y",$date ));
 
-$cols=array( $itemcolumn    => 40,
-             $itemdescription  => 87,
-             $itemquantity     => 22,
-             $itemtotal => 41 );
-$pdf->addCols( $cols);
-$cols=array( $itemcolumn    => "L",
-             $itemdescription  => "L",
-             $itemquantity     => "C",
-             $itemtotal => "R" );
-$pdf->addLineFormat($cols);
-$pdf->addLineFormat($cols);
+$pdf->SetLineItems($LineItems);
 
-$y    = 85;
+$pdf->AddDocumentInfoTop();
 
-$itemsarray = array();
+$pdf->OutputInvoicePDF();
 
-foreach($LineItems as &$val){
-	
-if(!$val["itemexpense"]){
-	
-	$line = array( $itemcolumn    => $val["itemname"],
-               $itemdescription  => $val["itemdescription"],
-               $itemquantity     => $val["itemquantity"],
-               $itemtotal => $val["itemtotal"]);
-
-$size = $pdf->addLine( $y, $line );
-$y   += $size + 2;
-	
-array_push($itemsarray,array ( "px_unit" => $val["itemtotal"], "qte" => $val["itemquantity"], "taxable"=>$val["itemtaxable"], "rate"=>$val["itemrate"] ));
-}
-	
-}
-  
-$tot_prods = $itemsarray;
-					
-$pdf->addTotalsFormatting();
-$pdf->addTVAs($tot_prods);
-
-$pdf->AddImages($images);
-
-$pdf->Output();
- }else{
+ }
+ 
+ else{
 	 
-   die('No Invoice Found.');
+	 die('No Invoice Found.');
 	 
  }
+
+
+
 ?>

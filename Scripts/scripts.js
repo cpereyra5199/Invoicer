@@ -1480,6 +1480,8 @@ function SendSavedInvoice(invoiceid) {
 		}
 	}).done(function(data) {
 
+	alert(data);
+	
 		GetSentInvoices();
 		generateModals();
 		$("#customloader").hide();

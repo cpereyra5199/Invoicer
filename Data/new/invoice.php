@@ -57,20 +57,38 @@ function SetLineItems($items){
 	$tax = 0;
 	$sum = 0;
 	
+	$length = count($items);
+	$i = 1;
+	
 	foreach($items as &$val){
 		
 		$rate =floatval($val["itemtotal"]);
 
 		$total = ($rate * $val["itemquantity"]);
 
+		if($i == $length){
+			
 		$lineitemshtml = $lineitemshtml.
 		'<tr>
-		<td colspan="2">'.$val["itemname"].'</td>
-		<td colspan="4">'.$val["itemdescription"].'</td>
-		<td style="text-align:center">'.$val["itemquantity"].'</td>
-		<td style="text-align:center">'.number_format($rate,2).'</td>
-		<td style="text-align:right">'.number_format($total,2).'</td>
+		<td style="border-bottom:1px solid black;border-left:1px solid black; border-right:1px solid black" colspan="2">'.$val["itemname"].'</td>
+		<td style="border-bottom:1px solid black;border-left:1px solid black; border-right:1px solid black" colspan="4">'.$val["itemdescription"].'</td>
+		<td style="border-bottom:1px solid black;border-left:1px solid black; border-right:1px solid black;text-align:center">'.$val["itemquantity"].'</td>
+		<td style="border-bottom:1px solid black;border-left:1px solid black; border-right:1px solid black;text-align:center">'.number_format($rate,2).'</td>
+		<td style="border-bottom:1px solid black;p8border-left:1px solid black; border-right:1px solid black;text-align:center">'.number_format($total,2).'</td>
 		</tr>';
+			
+		}else{
+		
+		$lineitemshtml = $lineitemshtml.
+		'<tr>
+		<td style="border-left:1px solid black; border-right:1px solid black" colspan="2">'.$val["itemname"].'</td>
+		<td style="border-left:1px solid black; border-right:1px solid black" colspan="4">'.$val["itemdescription"].'</td>
+		<td style="border-left:1px solid black; border-right:1px solid black;text-align:center">'.$val["itemquantity"].'</td>
+		<td style="border-left:1px solid black; border-right:1px solid black;text-align:center">'.number_format($rate,2).'</td>
+		<td style="border-left:1px solid black; border-right:1px solid black;text-align:center">'.number_format($total,2).'</td>
+		</tr>';
+		
+		}
 		
 		$sum += $total;
 		
@@ -78,6 +96,8 @@ function SetLineItems($items){
 			
 			$tax+= round(($total)*($val["itemrate"]/100),2,PHP_ROUND_HALF_UP);
 		}
+		
+		$i++;
 	}
 	
 	$taxtotal = $tax;
@@ -100,8 +120,7 @@ function SetCompanyInfo($name,$address){
 	global $companyinfo;
 	
 	$companyinfo = '<span style="font-size:10px;color:#646464"><span style="font-size:12px"><b>'.$name.'</b></span><br/>'.$address["street"].'
-	<br/>'.$address["citystate"].'
-	<br/>'.$address["zipcode"].'</span>';
+	<br/>'.$address["citystate"].'&nbsp;'.$address["zipcode"].'</span>';
 	
 	
 }
@@ -210,25 +229,50 @@ function AddDocumentInfoTop(){
 	<table cellpadding="2">
 	<thead>
 	<tr style="background-color:#C0C0C0;text-align:center">
-	<th colspan="2">Service</th>
-	<th colspan="4">Description</th>
-	<th style="text-align:center">Quantity</th>
-	<th>Rate</th>
-	<th>Amount</th>
+	<th style="border:1px solid black" colspan="2">Service</th>
+	<th colspan="4" style="border:1px solid black">Description</th>
+	<th style="border:1px solid black;text-align:center">Quantity</th>
+	<th style="border:1px solid black">Rate</th>
+	<th style="border:1px solid black">Amount</th>
 	</tr>
 	</thead>'.$lines.'
 	</table>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
 	';
 	
-}
-
-function AddTitleAddress($titleaddress){
-	
 	
 }
 
-function AddItems($items){
+function AddTotals(){
 	
+	$totals = '<table><tr>
+	<td></td>
+	<td></td>
+	<td><table cellpadding="1">
+	<tr>
+	<td style="font-size:9px;border-left:1px solid black;border-top:1px solid black">SUBTOTAL</td>
+	<td style="font-size:9px;text-align:right;color:#646464;border-right:1px solid black;border-top:1px solid black">4000.00</td>
+	</tr>
+	<tr>
+	<td style="font-size:9px; border-bottom:1px solid black;border-left:1px solid black;">TAXES</td>
+	<td style="font-size:9px; border-bottom:1px solid black;text-align:right;color:#646464;border-right:1px solid black">0.00</td>
+	</tr>
+	<tr style="background-color:#C0C0C0"><td style="border-left:1px solid black;"></td><td style="border-right:1px solid black"></td></tr>
+	<tr style="background-color:#C0C0C0">
+	<td style="font-size:11px;border-left:1px solid black;border-bottom:1px solid black">TOTAL</td>
+	<td style="font-size:11px; text-align:right;border-bottom:1px solid black;border-right:1px solid black">4000.00</td>
+	</tr>
+	</table>
+	</td>
+	</tr>
+	</table>';
+	
+	return $totals;
 	
 	
 }
@@ -238,6 +282,11 @@ function OutputInvoice(){
 	global $html;
 
 	$this->writeHTML($html, true, false, true, false, '');
+	
+	if($this->page == 1){
+	$this->SetY($this->getPageHeight()-45);
+	}
+	$this->writeHTML($this->AddTotals(), true, false, true, false, '');
 	
 	$this->Output('invoice.pdf', 'I');
 }
