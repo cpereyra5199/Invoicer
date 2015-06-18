@@ -134,10 +134,10 @@ $mail->SMTPDebug  = 2;                     // enables SMTP debug information (fo
                                            // 2 = messages only
 $mail->SMTPSecure = 'ssl';
 $mail->SMTPAuth   = true;                  // enable SMTP authentication
-$mail->Host       = "p3plcpnl0880.prod.phx3.secureserver.net"; // sets the SMTP server
+$mail->Host       = "smtpout.secureserver.net"; // sets the SMTP server
 $mail->Port       = 465;                    // set the SMTP port for the GMAIL server
-$mail->Username   = "info@efcontractorsllc.com"; // SMTP account username
-$mail->Password   = "ef1968";        // SMTP account password
+$mail->Username   = "info@cgscontractors.com"; // SMTP account username
+$mail->Password   = "joaquincontreras";        // SMTP account password
 
 $mail->AddReplyTo($sendfrom,$company);
 

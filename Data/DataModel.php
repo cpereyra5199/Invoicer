@@ -662,7 +662,7 @@ function GetLineItems($invoiceID, $returnjason) {
 	$stack = array();
 	while ($row = mysql_fetch_array($result)) {
 
-		$arr = array("itemname" => $row["ItemName"], "itemdescription" => $row["ItemDescription"], "itemquantity" => $row["ItemQuantity"], "itemtotal" => $row["ItemTotal"], "itemtaxable" => $row["Taxable"], "itemrate" => $row["Rate"], "itemid" => $row["ID"], "itemexpense"=>$row["Expense"]);
+		$arr = array("itemname" => $row["ItemName"], "itemdescription" => nl2br($row["ItemDescription"]), "itemquantity" => $row["ItemQuantity"], "itemtotal" => $row["ItemTotal"], "itemtaxable" => $row["Taxable"], "itemrate" => $row["Rate"], "itemid" => $row["ID"], "itemexpense"=>$row["Expense"]);
 
 		array_push($stack, $arr);
 	}

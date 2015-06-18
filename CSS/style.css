@@ -101,11 +101,19 @@ display:none;
 
 @media(max-width:320px){
 	
+	.invoicebuttonsdiv{
+
+overflow:auto;
+
+}
+
+	
 	.postbuttons{
 		
 		display:inline-block;
 		width:100%;
 		margin-bottom:5px;	
+		float:left;
 		
 		
 	}
@@ -218,6 +226,16 @@ float: left;
 
 @media (min-width:401px){	
 
+.description{
+
+  resize: none;
+  vertical-align: text-top;
+  margin-left: 15px;
+  width: 30%;
+  margin-top: -6px;
+
+}
+
 .customers{
 
 display:inline-block; margin-top:-10px;display:none;word-break:break-all;
@@ -270,6 +288,13 @@ background-color:#FAFAFA;
 
 @media (max-width:400px){
 
+.description{
+
+  resize: none;
+  margin-top:10px;
+  width:80%;
+  margin-left:15px;
+}
 
 .pure-table td, .pure-table th{
 

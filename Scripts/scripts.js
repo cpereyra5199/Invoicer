@@ -1644,11 +1644,11 @@ function LoadInvoiceItems(invoiceid) {
 		var items = JSON.parse(data);
 
 		jQuery.each(items, function() {
-
+		
 			if ($(".itemrow").length == 0) {
 				element.find(".price").val(this.itemtotal);
 				element.find(".quantity").val(this.itemquantity);
-				element.find(".description").val(this.itemdescription);
+				element.find(".description").val(this.itemdescription.replace(/<br \/>/g,""));
 				element.find(".itemname").val(this.itemname);
 				element.find(".itemlist").val(this.itemname);
 				element.find(".itemid").val(this.itemid);
@@ -1689,7 +1689,7 @@ function LoadInvoiceItems(invoiceid) {
 				var newelement = $(".itemrow:last").clone();
 				newelement.find(".price").val(this.itemtotal);
 				newelement.find(".quantity").val(this.itemquantity);
-				newelement.find(".description").val(this.itemdescription);
+				newelement.find(".description").val(this.itemdescription.replace(/<br \/>/g,""));
 				newelement.find(".itemname").val(this.itemname);
 				newelement.find(".itemlist").val(this.itemname);
 				newelement.find(".itemid").val(this.itemid);

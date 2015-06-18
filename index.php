@@ -164,10 +164,9 @@
 <select class="itemlist">
 </select>
 
-
 <input type="hidden" class="itemname" value="" name="itemname[]" />
 <input type="hidden" class="itemid" value="" name="itemid[]" />
-<input type="text" name="description[]" class="description" placeholder="Description"/>
+<textarea name="description[]" rows="7" class="description" placeholder="Description"></textarea>
 <input type="text" name="quantity[]" onkeypress="return isNumber(event)" value="1" class="quantity" placeholder="Quantity"/>
 <input type="text" name="price[]" onkeypress="return isDecimal(event)" class="price" placeholder="Price"/>
 
@@ -230,7 +229,7 @@
 <br/>
 
 
-<div style="margin:20px" data-ajax-target="invoicebuttons">
+<div style="margin:20px" class="invoicebuttonsdiv" data-ajax-target="invoicebuttons">
 <span style="margin-right:10px" class="link saveinvoicebtn postbuttons">Save Estimate</span>
 <span style="margin-right:10px" class="link generateinvoicebtn postbuttons">Generate Invoice</span>
 <span style="margin-right:10px" class="link  postbuttons" onclick="clearForm()">Clear</span>
