@@ -56,6 +56,9 @@
                 <li>
                     <div class="categoriesbtn link" href="#"><img src="images/list91.png" /><span class=" customanchor">Products</span></div>
                 </li>
+				<li>
+                    <div class="payeesbtn link" href="#"><img src="images/payees.png" /><span class=" customanchor">Payees</span></div>
+                </li>
                 <li>
                     <div class="settingsbtn link" href="#"><img src="images/settings51.png" /><span class=" customanchor">Settings</span></div>
                 </li>
@@ -110,7 +113,7 @@
 <h3>PRODUCTS</h3>
 <br/>
 <div class="items-container">
-<div class="items-containerinner"></div>
+<div data-ajax-target='productscontainer' class="items-containerinner"></div>
 </div>
 <div class="clear-both" style="margin-bottom:20px;"></div>
 <span class="link addinvoiceitem">Add Item</span>
@@ -126,6 +129,22 @@
 <div style="display:inline-block"><span>Expense</span>
 <input class="expenseproduct" type="checkbox"/></div>
 <span class="link savelink postbuttons">Save</span></div>
+</div>
+
+<div class="payees">
+
+<h3>PAYEES</h3>
+<br/>
+<div class="items-container">
+<div data-ajax-target='payeecontainer' class="items-containerinner"></div>
+</div>
+<div class="clear-both" style="margin-bottom:20px;"></div>
+<span class="link addinvoiceitem">Add Item</span>
+<br/>
+<div class="invoiceitemadd">
+<span class="link closeadditem">X</span>
+<input class="payeename" placeholder="Payee Name" type="text" />
+<span class="link savelinkpayee postbuttons">Save</span></div>
 </div>
 
 <form name="invoiceform" class="invoice">
@@ -331,6 +350,7 @@
 <span class="customer_saved_modal"></span>
 <span class="delete_estimate_modal"></span>
 <span class="delete_complete"></span>
+<span class="save_payee_modal"></span>
 
 
 
@@ -348,6 +368,7 @@
 	<div class="link customersbtn"><img src="images/customer.png" /><span class="customanchor">Customers</span></div>
 	<div class="link reportsbtn"><img src="images/reports.png" /><span class="customanchor">Reports</span></div>
 	<div class="link categoriesbtn"><img src="images/list91.png" /><span class="customanchor">Products</span></div>
+	<div class="link payeesbtn"><img src="images/payees.png" /><span class="customanchor">Payees</span></div>
 	<div class="link settingsbtn"><img src="images/settings51.png" /><span class="customanchor">Settings</span></div>
 
 		

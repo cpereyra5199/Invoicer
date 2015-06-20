@@ -1,8 +1,10 @@
 var categorieslist = [];
+var payeeslist =[];
 var taxrate = new Number(0.00);
 
 $(document).ready(function() {
 
+	GetPayees();
 	GetCategories();
 	GetSettings();
 	GetSentInvoices();
@@ -538,21 +540,41 @@ e.preventDefault();
 
 	});
 
-	$(document).on("click", ".removeitem", function() {
+	$(document).on("click", "span[data-ajax-target='removeitem']", function() {
 
 		RemoveCategory($(this).next().html());
 
 	});
+	
+	$(document).on("click","span[data-ajax-target='removeitempayee']",function(){
+	
+		var payeeid = $(this).attr("data-object-id");
+	
+		RemovePayee(payeeid);
+	
+	})
+	
+	$(document).on("click",".savelinkpayee",function(){
+		
+		var payeename = $(this).parent().find(".payeename").val(); 
+		
+		AddPayee(payeename);
+		
+		$(this).parent().find(".payeename").val("");
+		$(this).parent().hide();
+		
+	})
 
 	$(document).on("click", ".savelink", function() {
 
 		var taxable = $(this).parent().find(".taxableproduct").is(":checked");
 		var expense = $(this).parent().find(".expenseproduct").is(":checked");
 		var totalamount = $(this).parent().find(".itemamount").val();
+		var productname = $(this).parent().find(".producttoadd").val();
 
+		
 
-
-		AddCategory($(this).parent().find(".producttoadd").val(),taxable,expense,totalamount);
+		AddCategory(productname,taxable,expense,totalamount);
 		$(this).parent().find(".producttoadd").val("");
 		$(this).parent().find(".itemamount").val("");
 		$(this).parent().hide();
@@ -634,13 +656,13 @@ e.preventDefault();
 
 	$(document).on("click", ".addinvoiceitem", function() {
 
-		$(".invoiceitemadd").slideDown();
+		$(this).parent().find(".invoiceitemadd").slideDown();
 
 	});
 
 	$(document).on("click", ".closeadditem", function() {
 
-		$(".invoiceitemadd").slideUp();
+		$(this).parent().slideUp();
 
 	});
 
@@ -719,6 +741,14 @@ $(document).on("click", ".homebtn", function() {
 		$(".paulund_block_page").remove();
 		if(!$(".categories").is(":visible")){
 		LoadSection("categories");
+}
+	});
+	
+		$(document).on("click", ".payeesbtn", function() {
+		
+		$(".paulund_block_page").remove();
+		if(!$(".payees").is(":visible")){
+		LoadSection("payees");
 }
 	});
 	
@@ -889,11 +919,11 @@ function GetCategories() {
 		var categoriesarray = JSON.parse(data);
 
 		categorieslist = categoriesarray;
-		$(".items-containerinner").html("");
+		$("div[data-ajax-target='productscontainer']").html("");
 
 		jQuery.each(categoriesarray, function() {
 
-			$(".items-containerinner").append("<span class='link removeitem'>X</span><span>" + this + "</span><div class='clear-both' style='margin-bottom:10px;'></div>");
+			$("div[data-ajax-target='productscontainer']").append("<span data-ajax-target='removeitem' class='link removeitem'>X</span><span>" + this + "</span><div class='clear-both' style='margin-bottom:10px;'></div>");
 
 		});
 
@@ -901,6 +931,34 @@ function GetCategories() {
 
 	});
 
+}
+
+function GetPayees(){
+	
+	$.ajax({
+
+		type : "GET",
+		cache : false,
+		url : "Data/DataModel.php",
+		data : {
+			GetPayees : "true"
+		}
+	}).done(function(data) {
+
+		var payeesarray = JSON.parse(data);
+		
+		payeeslist = payeesarray;
+		$("div[data-ajax-target='payeecontainer']").html("");
+
+		jQuery.each(payeesarray, function() {
+			
+			$("div[data-ajax-target='payeecontainer']").append("<span data-ajax-target='removeitempayee' data-object-id='"+this.ID+"' class='link removeitem'>X</span><span>" + this.Name + "</span><div class='clear-both' style='margin-bottom:10px;'></div>");
+
+		});
+
+		RefreshDropDowns();
+
+	});
 }
 
 function GetSentInvoices(date) {
@@ -1234,6 +1292,7 @@ function AddCategory(category,tax,expense,totalamount) {
 			AddItem : category, Tax: tax,Expense:expense,Total:totalamount
 		}
 	}).done(function(data) {
+		
 		GetCategories();
 
 		generateModals();
@@ -1241,6 +1300,26 @@ function AddCategory(category,tax,expense,totalamount) {
 
 	});
 
+}
+
+function AddPayee(payeename){
+	
+	$.ajax({
+		type : "POST",
+		cache : false,
+		url : "Data/DataModel.php",
+		data : {
+			AddPayee : payeename
+		}
+	}).done(function(data) {
+		
+		GetPayees();
+
+		generateModals();
+		$('.save_payee_modal').click();
+
+	});
+	
 }
 
 function GetCategorySettings(category,parent) {
@@ -1302,6 +1381,23 @@ function RemoveCategory(category) {
 	}).done(function(data) {
 
 		GetCategories();
+
+	});
+
+}
+
+function RemovePayee(payeeid) {
+
+	$.ajax({
+		type : "POST",
+		cache : false,
+		url : "Data/DataModel.php",
+		data : {
+			DeletePayee : payeeid
+		}
+	}).done(function(data) {
+
+		GetPayees();
 
 	});
 
@@ -1636,7 +1732,7 @@ function LoadInvoiceItems(invoiceid) {
 			InvoiceID : invoiceid
 		}
 	}).done(function(data) {
-
+		
 		var element = $(".itemrow").last().clone();
 
 		$(".itemscontainer").empty();
@@ -1991,8 +2087,15 @@ function generateModals() {
 
 	$('.save_modal_category').paulund_modal_box({
 
-		title : 'Item Added',
-		description : 'Your new item has been successfully added.'
+		title : 'Product Added',
+		description : 'Your new product has been successfully added.'
+
+	});
+	
+	$('.save_payee_modal').paulund_modal_box({
+
+		title : 'Payee Added',
+		description : 'Your new payee has been successfully added.'
 
 	});
 	
@@ -2162,6 +2265,7 @@ function hideAll(){
 	
 	$(".settings").hide();
 	$(".categories").hide();
+	$(".payees").hide();
 	$(".Search").hide();
 	$(".homepage").hide();
 	$(".invoice").hide();

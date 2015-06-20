@@ -12,15 +12,30 @@ if (isset($_GET["GetCategories"])) {
 
 	GetCategories();
 
-} else if (isset($_POST["DeleteItem"])) {
+}else if (isset($_GET["GetPayees"])){
+
+	GetPayees();	
+	
+}
+ else if (isset($_POST["DeleteItem"])) {
 
 	DeleteCategory($_POST["DeleteItem"]);
 
-} else if (isset($_POST["AddItem"])) {
+}else if (isset($_POST["DeletePayee"])){
+	
+	DeletePayee($_POST["DeletePayee"]);
+	
+}
+ else if (isset($_POST["AddItem"])) {
 
 	AddCategory($_POST["AddItem"],$_POST["Tax"],$_POST["Expense"],$_POST["Total"]);
 
-} else if (isset($_POST["FormValues"])) {
+}else if (isset($_POST["AddPayee"])){
+	
+	AddPayee($_POST["AddPayee"]);
+	
+}
+ else if (isset($_POST["FormValues"])) {
 
 	SaveInvoice($_POST["FormValues"], $_POST["SaveOnly"], $_POST["InvoiceID"]);
 
@@ -60,7 +75,7 @@ else if (isset($_GET["GetSettings"])) {
 
 } else if (isset($_GET["GetInvoiceItems"]) && isset($_GET["InvoiceID"])) {
 
-	GetLineItems($_GET["InvoiceID"], "true");
+	GetLineItems($_GET["InvoiceID"], "true","true");
 
 } else if (isset($_POST["PayInvoice"]) && isset($_POST["InvoiceID"])){
 	
@@ -607,7 +622,7 @@ function GetInvoice($invoiceID, $returnjason) {
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
 	
-	$query = "select IFNULL(p.Amount,0.00) as PaymentAmount,(SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2))-IFNULL(p.Amount,0.00)) as Balance, SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount,Paid,PaidDate,EmailSent, i.InvoiceTitle, i.ID,Name, StreetAddress,CityState as ClientCityState,ZipCode,Email, DateTime, ExpirationDate,CustomerID from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID inner join `customer` c on c.ID = i.CustomerID left join (select sum(Amount) Amount,InvoiceID from `payments` p group by p.InvoiceID) as p on p.InvoiceID = i.ID  where i.ID=".$invoiceID." GROUP BY i.ID";
+	$query = "select IFNULL(p.Amount,0.00) as PaymentAmount,(SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2))-IFNULL(p.Amount,0.00)) as Balance, SUM(ROUND(IF(Taxable = true, (ItemTotal*ItemQuantity)+((ItemTotal*ItemQuantity)*(Rate/100)), ItemTotal*ItemQuantity),2)) as TotalAmount,Paid,PaidDate,EmailSent, i.InvoiceTitle, i.ID,Name, StreetAddress,CityState as ClientCityState,ZipCode,Email, DateTime, ExpirationDate,CustomerID from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID and it.Expense=0 inner join `customer` c on c.ID = i.CustomerID left join (select sum(Amount) Amount,InvoiceID from `payments` p group by p.InvoiceID) as p on p.InvoiceID = i.ID  where i.ID=".$invoiceID." GROUP BY i.ID";
 
 	$result = mysql_query($query);
     
@@ -651,12 +666,20 @@ function GetInvoice($invoiceID, $returnjason) {
 	}
 }
 
-function GetLineItems($invoiceID, $returnjason) {
+function GetLineItems($invoiceID, $returnjason,$showexpenses) {
 
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
 
-	$query = "select * from `invoiceitem` where InvoiceID=" . $invoiceID;
+	if($showexpenses == "false"){
+		
+		$query = "select * from `invoiceitem` where Expense=0 AND InvoiceID=" . $invoiceID;
+		
+	}else{
+		
+		$query = "select * from `invoiceitem` where InvoiceID=" . $invoiceID;
+		
+	}
 
 	$result = mysql_query($query);
 	$stack = array();
@@ -686,14 +709,47 @@ function DeleteCategory($category) {
 
 }
 
+function DeletePayee($payeeid){
+	
+	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+	$query = "Delete From `payee` where ID=".$payeeid;
+	mysql_query($query);
+	
+}
+
 function AddCategory($category,$tax,$expense,$totalamount) {
 	if ($category != "") {
+		
 		mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 		mysql_select_db($GLOBALS['dbname']);
-		$query = "INSERT INTO `invoicecategories`(`Category`,`Taxable`,`Expense`,`Amount`) VALUES ('" . $category . "',".$tax.",".$expense.",$totalamount)";
+		
+		if($totalamount==""){
+		
+			$totalamount=0.00;
+			
+		}
+		
+		$query = "INSERT INTO `invoicecategories`(`Category`,`Taxable`,`Expense`,`Amount`) VALUES ('" . $category . "',".$tax.",".$expense.",".$totalamount.")";
+		
 		mysql_query($query);
 	}
 
+}
+
+function AddPayee($payeename){
+	
+	if($payeename !=""){
+		
+		mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+		mysql_select_db($GLOBALS['dbname']);
+		
+		$query = "INSERT INTO `payee`(`Name`) values('".$payeename."')";
+		
+		mysql_query($query);
+		
+	}
+	
 }
 
 function GetItemSettings($category) {
@@ -723,6 +779,30 @@ function GetItemSettings($category) {
 		
 	}
 
+}
+
+function GetPayees(){
+	
+	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+
+	$query = "select Name,ID from payee order by Name asc";
+	$result = mysql_query($query);
+
+	$payees = array();
+
+	while ($row = mysql_fetch_array($result)) {
+
+		$arr = array(
+		"ID"=>$row["ID"],
+		"Name"=>$row["Name"]
+		);
+			
+			array_push($payees,$arr);
+	}
+
+	echo(json_encode($payees));
+	
 }
 
 function GetCategories() {

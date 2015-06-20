@@ -61,11 +61,14 @@ function SetLineItems($items){
 	
 	foreach($items as &$val){
 		
+		if($val["itemexpense"]=="0"){
+		
 		$rate =floatval($val["itemtotal"]);
 
 		$total = ($rate * $val["itemquantity"]);
+	
 
-		if($i == $length){
+		if($i == $length || $length == 1){
 			
 		$lineitemshtml = $lineitemshtml.
 		'<tr>
@@ -97,6 +100,7 @@ function SetLineItems($items){
 		}
 		
 		$i++;
+	}
 	}
 	
 	$taxtotal = $tax;

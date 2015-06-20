@@ -82,7 +82,7 @@ padding:10px;
 	
 }
 
-.settings, .categories,.invoice{
+.settings, .categories,.invoice,.payees{
 
 background-color:#FDFDFD;
 padding:10px;
@@ -825,6 +825,7 @@ overflow:auto;
     height: 100%;
     margin-left: -250px;
     overflow-y: auto;
+	overflow-x: hidden;
     background-color: #193048;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;

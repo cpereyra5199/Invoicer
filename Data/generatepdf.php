@@ -30,7 +30,7 @@ $pdf->SetLogoUrl('../images/logo.png');
 
 $settings = GetSettingsArray();
 $client = GetInvoice($invoiceID,"false");
-$LineItems = GetLineItems($invoiceID,"false");
+$LineItems = GetLineItems($invoiceID,"false","false");
 
 $pdf->SetInvoiceID($invoiceID);
 
