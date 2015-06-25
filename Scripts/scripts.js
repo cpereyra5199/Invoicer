@@ -65,6 +65,47 @@ $(document).ready(function() {
 	 
  });
  
+  $(document).on('click','#customerpayments',function(){
+	 
+	 var customerid = $(this).attr("data-customer-id");
+	 $.ajax({
+
+		type : "GET",
+		cache : false,
+		url : "Data/DataModel.php",
+		data : {
+			CustomerInvoicePaymentIDs : customerid,
+			
+		}
+	}).done(function(data) {
+
+		var invoicesarray = JSON.parse(data);	
+
+		var html = '<div data-ajax-section="customerpaymentscontainer""><input onkeypress="return isDecimal(event)" style="margin-left:0px!important;" placeholder="Payment Amount" type="text"/><div>'
+		
+		jQuery.each(invoicesarray, function() {
+
+			html = html + "<div><span>"+this.ID+"</span><span>"+this.Title+"</span><span>"+this.Balance+"</span><input type='text' /></div>";
+			
+		});
+		
+		html = html + '</div></div>';
+
+		$(".customerpayments").append(html);
+		
+		LoadSection("customerpayments");
+		
+		
+		
+		
+	});
+	 
+	 //LoadCustomer(customerid);
+	 //LoadSection("invoice");
+	 
+	 
+ });
+ 
  $(document).on("click",".deleteimage",function(){
 	 
 	 var imageid = $(this).attr("data-image-id");
@@ -193,6 +234,7 @@ $(document).ready(function() {
         GetCustomerInvoicesByID(id);
         
     });
+	
     
     $(document).on("click",".updatecustomerinfo",function(){
         
@@ -1958,9 +2000,7 @@ function isDecimal(evt) {
 
 function isValidNumber(number){
 	
-
 	return Number(number) > 0;
-	
 }
 
 function GetCustomerInvoicesByID(customerid){
@@ -1968,7 +2008,8 @@ function GetCustomerInvoicesByID(customerid){
     var html = "<div class='customerinvoices'>";
 	html = html + "<h2><table id='customerinfotable' class='pure-table pure-table-horizontal headerlighterblue width-100'><tbody><tr><td>Income</td><td class='text-right' id='totalcustomerincome'></td></tr><tr><td>Expenses</td><td class='text-right' id='totalcustomerexpense'></td></tr><tr><td>Net</td><td class='text-right' id='totalcustomernet'></td></tr></tbody></table></h2>";
 	html = html + "<h2><table class='pure-table pure-table-horizontal headerexpired width-100'><tbody><tr><td>Outstanding</td><td id='outstandingtotal' class='text-right'></td></tr></tbody></table></h2><br/><br/>";
-	html = html + "<button class='pure-button pure-button-primary' data-customer-id='"+customerid+"' id='newcustomerinvoice'>New Invoice</button></br></br>";
+	html = html + "<button class='pure-button pure-button-primary margin1' data-customer-id='"+customerid+"' id='newcustomerinvoice'>New Invoice</button>";
+	html = html + "<button class='pure-button pure-button-primary margin1 greenhue' data-customer-id='"+customerid+"' id='customerpayments'>Receive Payment</button></br></br>";
 	html = html + "<div class='customerinvoicesearch'><input type='text' placeholder='Invoice ID' /></div>";
 	var incometotal = Number(0);
 	var expense = Number(0);
@@ -2344,6 +2385,7 @@ function hideAll(){
 	$(".invoice").hide();
     $(".customerspage").hide();
 	$(".reports").hide();
+	$(".customerpayments").hide();
 	
 }
 

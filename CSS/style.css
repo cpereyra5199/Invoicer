@@ -701,7 +701,7 @@ margin-bottom: 10px;
 	
 }
 
-.customerspage,.reports{
+.customerspage,.reports,.customerpayments{
 	
 	background-color: #FDFDFD;
 padding:10px;
@@ -1222,5 +1222,17 @@ text-align:center!important;
 .display-initial{
 
 display:initial!important;
+
+}
+
+.margin1{
+
+margin:5px!important;
+
+}
+
+.greenhue{
+
+background-color:#53BC44!important;
 
 }

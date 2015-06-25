@@ -278,6 +278,14 @@
 
 </div>
 
+<div class="customerpayments">
+
+<div style="text-align:center"><h3>Payments</h3></div>
+
+<br/>
+
+</div>
+
 <div class="homepage">
 	<h2>EF Contractors LLC.</h2>
 

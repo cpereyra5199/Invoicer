@@ -136,6 +136,10 @@ else if (isset($_GET["GetHomPageData"])){
   DeleteInvoice($_POST["InvoiceID"]);
     
     
+}else if(isset($_GET["CustomerInvoicePaymentIDs"])){
+	
+	GetInvoicesToPayByCustomer($_GET["CustomerInvoicePaymentIDs"]);
+	
 }
 
 function DeleteInvoice($invoiceID){
@@ -1195,6 +1199,37 @@ function GetImagesForInvoice($invoiceID){
 	}
 	
 	return $images;
+	
+}
+
+function GetInvoicesToPayByCustomer($customID){
+	
+	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+	
+	$query = "select i.ID,(SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2))-IFNULL(p.Amount,0.00)) as Balance, i.Invoicetitle from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID and it.Expense = 0 left join `invoiceitem` expenses on expenses.InvoiceID = i.ID and expenses.Expense = 1  left join (select sum(Amount) Amount,InvoiceID from `payments` p group by p.InvoiceID) as p on p.InvoiceID = i.ID where i.CustomerID=".$customID." and Paid=0 GROUP BY i.ID order by Datetime desc, i.id desc";
+	
+	$result = mysql_query($query);
+
+	$customerinvoices = array();
+
+	while ($row = mysql_fetch_array($result)) {
+
+	
+		$arr = array(
+		
+		"ID"=>$row["ID"],
+		"Balance"=>$row["Balance"],
+		"Title"=>$row["Invoicetitle"]
+		
+		);
+	
+		array_push($customerinvoices, $arr);
+
+	}
+
+	echo(json_encode($customerinvoices));
+	
 	
 }
 
