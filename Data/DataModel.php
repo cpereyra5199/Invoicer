@@ -713,7 +713,7 @@ function DeletePayee($payeeid){
 	
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
-	$query = "Delete From `payee` where ID=".$payeeid;
+	$query = "Delete From `invoicecategories` where ID=".$payeeid;
 	mysql_query($query);
 	
 }
@@ -744,7 +744,7 @@ function AddPayee($payeename){
 		mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 		mysql_select_db($GLOBALS['dbname']);
 		
-		$query = "INSERT INTO `payee`(`Name`) values('".$payeename."')";
+		$query = "INSERT INTO `invoicecategories`(`Category`,`Type`) values('".$payeename."',1)";
 		
 		mysql_query($query);
 		
@@ -786,7 +786,7 @@ function GetPayees(){
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
 
-	$query = "select Name,ID from payee order by Name asc";
+	$query = "select Category,ID from invoicecategories where type= 1 order by Category";
 	$result = mysql_query($query);
 
 	$payees = array();
@@ -795,7 +795,7 @@ function GetPayees(){
 
 		$arr = array(
 		"ID"=>$row["ID"],
-		"Name"=>$row["Name"]
+		"Name"=>$row["Category"]
 		);
 			
 			array_push($payees,$arr);
@@ -810,14 +810,22 @@ function GetCategories() {
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
 
-	$query = "select Category from invoicecategories order by Category asc";
+	$query = "select ID,Category from invoicecategories where Type = 0 order by Category asc";
 	$result = mysql_query($query);
 
 	$categories = array();
 
 	while ($row = mysql_fetch_array($result)) {
 
-		array_push($categories, $row["Category"]);
+	
+		$arr = array(
+		
+		"ID"=>$row["ID"],
+		"Name"=>$row["Category"]
+		
+		);
+	
+		array_push($categories, $arr);
 
 	}
 

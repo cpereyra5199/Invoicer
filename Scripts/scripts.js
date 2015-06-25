@@ -359,16 +359,13 @@ e.preventDefault();
 
 	$(document).on("change",".itemlist",function(){
 		
-		
+		if(!$(this).parent().find(".expense").is(":checked")){
 		var category = $(this).val();
 		
 		var parent = $(this).parent();
 		
 		GetCategorySettings(category,parent);
-		
-		
-		
-		
+		}
 	});
 
 	$(document).on("click","div[data-ajax-target='loadcustomerinvoice']",function(){
@@ -503,10 +500,30 @@ e.preventDefault();
 		if (this.checked) {
 
 			$(this).next().val("1");
+			
+			var dropdown = $(this).parent().parent().find(".itemlist");
+			
+			dropdown.empty();
+
+			dropdown.append("<option value=''></option>");
+
+		$.each(payeeslist, function(index, item) {
+		dropdown.append("<option value='" + item.Name + "'>" + item.Name + "</option>");
+	});
 
 		} else {
 
 			$(this).next().val("0");
+			
+			var dropdown = $(this).parent().parent().find(".itemlist");
+			
+			dropdown.empty();
+
+			dropdown.append("<option value=''></option>");
+
+		$.each(categorieslist, function(index, item) {
+		dropdown.append("<option value='" + item.Name + "'>" + item.Name + "</option>");
+	});			
 
 		}
 
@@ -598,7 +615,7 @@ e.preventDefault();
 			length+=$(this).val().length;
 			
 			
-		});
+		});	
 
 		if (rows == 1) {
 
@@ -633,6 +650,16 @@ e.preventDefault();
 			element.insertAfter($(elementname));
 
 		}
+		
+		var dropdown = element.find(".itemlist");
+			
+			dropdown.empty();
+
+			dropdown.append("<option value=''></option>");
+
+		$.each(categorieslist, function(index, item) {
+		dropdown.append("<option value='" + item.Name + "'>" + item.Name + "</option>");
+	});		
 
 		calculateTotal();
 
@@ -923,7 +950,7 @@ function GetCategories() {
 
 		jQuery.each(categoriesarray, function() {
 
-			$("div[data-ajax-target='productscontainer']").append("<span data-ajax-target='removeitem' class='link removeitem'>X</span><span>" + this + "</span><div class='clear-both' style='margin-bottom:10px;'></div>");
+			$("div[data-ajax-target='productscontainer']").append("<span data-ajax-target='removeitem' class='link removeitem'>X</span><span>" + this.Name + "</span><div class='clear-both' style='margin-bottom:10px;'></div>");
 
 		});
 
@@ -1277,7 +1304,7 @@ function RefreshDropDowns() {
 	$(".itemlist").append("<option value=''></option>");
 
 	$.each(categorieslist, function(index, item) {
-		$(".itemlist").append("<option value='" + item + "'>" + item + "</option>");
+		$(".itemlist").append("<option value='" + item.Name + "'>" + item.Name + "</option>");
 	});
 
 }
@@ -1746,7 +1773,6 @@ function LoadInvoiceItems(invoiceid) {
 				element.find(".quantity").val(this.itemquantity);
 				element.find(".description").val(this.itemdescription.replace(/<br \/>/g,""));
 				element.find(".itemname").val(this.itemname);
-				element.find(".itemlist").val(this.itemname);
 				element.find(".itemid").val(this.itemid);
 
 
@@ -1769,11 +1795,35 @@ function LoadInvoiceItems(invoiceid) {
 
 					element.find(".hiddenexpense").val(1);
 					element.find(".hiddenexpense").prev().prop('checked', true);
+					
+					var dropdown = element.find(".itemlist");
+			
+					dropdown.empty();
+
+					dropdown.append("<option value=''></option>");
+
+					$.each(payeeslist, function(index, item) {
+					dropdown.append("<option value='" + item.Name + "'>" + item.Name + "</option>");
+					});		
+					
+					element.find(".itemlist").val(this.itemname);
 
 				} else {
 
 					element.find(".hiddenexpense").val(0);
 					element.find(".hiddenexpense").prev().prop('checked', false);
+					
+					var dropdown = element.find(".itemlist");
+			
+					dropdown.empty();
+
+					dropdown.append("<option value=''></option>");
+
+					$.each(categorieslist, function(index, item) {
+					dropdown.append("<option value='" + item.Name + "'>" + item.Name + "</option>");
+					});		
+					
+					element.find(".itemlist").val(this.itemname);
 
 				}
 				
@@ -1787,7 +1837,6 @@ function LoadInvoiceItems(invoiceid) {
 				newelement.find(".quantity").val(this.itemquantity);
 				newelement.find(".description").val(this.itemdescription.replace(/<br \/>/g,""));
 				newelement.find(".itemname").val(this.itemname);
-				newelement.find(".itemlist").val(this.itemname);
 				newelement.find(".itemid").val(this.itemid);
 
 				if (this.itemtaxable == "1") {
@@ -1807,11 +1856,35 @@ function LoadInvoiceItems(invoiceid) {
 					
 					newelement.find(".hiddenexpense").val(1);
 					newelement.find(".hiddenexpense").prev().prop('checked', true);
+					
+					var dropdown = newelement.find(".itemlist");
+			
+					dropdown.empty();
+
+					dropdown.append("<option value=''></option>");
+
+					$.each(payeeslist, function(index, item) {
+					dropdown.append("<option value='" + item.Name + "'>" + item.Name + "</option>");
+					});		
+					
+					newelement.find(".itemlist").val(this.itemname);
 
 				} else {
 
 					newelement.find(".hiddenexpense").val(0);
 					newelement.find(".hiddenexpense").prev().prop('checked', false);
+					
+					var dropdown = newelement.find(".itemlist");
+			
+					dropdown.empty();
+
+					dropdown.append("<option value=''></option>");
+
+					$.each(categorieslist, function(index, item) {
+					dropdown.append("<option value='" + item.Name + "'>" + item.Name + "</option>");
+					});		
+					
+					newelement.find(".itemlist").val(this.itemname);
 
 				}
 
