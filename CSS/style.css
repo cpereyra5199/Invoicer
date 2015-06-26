@@ -98,6 +98,36 @@ display:none;
 	display:none;
 }
 
+@media(max-width:980px){
+
+	
+.paymentcalculationrow .item{
+
+float:left;
+min-height: 1px;
+width:100%;
+
+}
+
+}
+
+@media(min-width:981px){
+
+.paymentcalculationrow .item{
+
+float:left;
+min-height: 1px;
+width:25%;
+
+}
+
+.paymentcalculationrow .item:last-child{
+
+text-align:right;
+
+}
+
+}
 
 @media(max-width:320px){
 	
@@ -1234,5 +1264,20 @@ margin:5px!important;
 .greenhue{
 
 background-color:#53BC44!important;
+
+}
+
+.paymentcalculationrow{
+
+overflow:auto;
+margin-bottom:5px;
+
+}
+
+.paymentamount{
+
+width:100%;
+text-align:right;
+margin:0px!important;
 
 }

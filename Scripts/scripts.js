@@ -38,7 +38,34 @@ $(document).ready(function() {
  });
  
  
- 
+ $(document).on("blur",'input[data-ajax-id="paymentamount"]',function(){
+	 
+	 var availableinvoicestopay = $(".paymentcalculationrow");
+	 
+	 var paymentamount = $(this).val();
+	 
+	 jQuery.each(availableinvoicestopay, function() {
+
+			var amount = $(this).find("span[data-ajax-id='balance']").html();
+			
+			if(Number(paymentamount)-Number(amount)<0){
+				
+				if(paymentamount<0){
+					amount="0.00";
+				}
+				else{
+				amount = paymentamount;
+				}
+			}
+
+			$(this).find("input").val(Number(amount).toFixed(2));
+					
+			paymentamount = paymentamount-amount;
+	 
+			
+		});
+	 
+ })
 
  
  $(document).on('click',"a[data-ajax-target='getreports']",function(){
@@ -81,15 +108,15 @@ $(document).ready(function() {
 
 		var invoicesarray = JSON.parse(data);	
 
-		var html = '<div data-ajax-section="customerpaymentscontainer""><input onkeypress="return isDecimal(event)" style="margin-left:0px!important;" placeholder="Payment Amount" type="text"/><div>'
+		var html = '<div data-ajax-section="customerpaymentscontainer""><div class="paymentamount"><input data-ajax-id="paymentamount" onkeypress="return isDecimal(event)" style="margin-left:0px!important;" placeholder="Payment Amount" type="text"/></div><br/><div>'
 		
 		jQuery.each(invoicesarray, function() {
 
-			html = html + "<div><span>"+this.ID+"</span><span>"+this.Title+"</span><span>"+this.Balance+"</span><input type='text' /></div>";
+			html = html + "<div class='paymentcalculationrow'><div class='item'><span>"+this.ID+"</span></div><div class='item'><span>"+this.Title+"</span></div><div class='item'><span data-ajax-id='balance'>"+this.Balance+"</span></div><div class='item'><input style='margin:0px!important;' type='text' /></div></div>";
 			
 		});
 		
-		html = html + '</div></div>';
+		html = html + '</div><button class="pure-button pure-button-primary">Pay</button></div>';
 
 		$(".customerpayments").append(html);
 		
