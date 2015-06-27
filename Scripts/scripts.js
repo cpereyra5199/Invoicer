@@ -57,6 +57,7 @@ $(document).ready(function() {
 	if(Number(totalavailable)>Number(paymentamount)){
 		
 		alert('Invoices exceed payment amount');
+	
 	}else{
 		
 		var checknumber = $("input[data-ajax-id='checknumber']").val();
@@ -74,6 +75,10 @@ $(document).ready(function() {
 
 		});
 		
+				setTimeout(function(){
+					
+				$("#customloader").hide();
+				
 				var customerid = $("div[data-ajax-section='customerpaymentscontainer']").attr("data-ajax-id");
 		
 				LoadPayments(customerid);
@@ -81,7 +86,7 @@ $(document).ready(function() {
 		
 				$("html, body").animate({
 				scrollTop : 0
-				}, "slow");
+				}, "slow");},1500);
 	}
 	}
  });
@@ -489,15 +494,16 @@ e.preventDefault();
 
 	$(document).on("click","div[data-ajax-target='loadcustomerinvoice']",function(){
 	
-	$invoiceid = $(this).attr("data-invoice-id");
+	    var invoiceid = $(this).attr("data-invoice-id");
 
-		LoadInvoice($invoiceid);
+		LoadInvoice(invoiceid);
+		
 	
 	});
 
 	$(document).on("click", ".loadinvoice", function() {
 
-		$invoiceid = $(this).attr("data-invoice-id");
+		var invoiceid = $(this).attr("data-invoice-id");
 
 		LoadInvoice($invoiceid);
 		
@@ -1688,6 +1694,48 @@ function ResendInvoice(invoiceid) {
 
 }
 
+function GetPaymentsForInvoice(invoiceid){
+	
+	
+	$(".paymentscontainer").remove();
+	
+	$.ajax({
+		type : "POST",
+		cache : false,
+		url : "Data/DataModel.php",
+		data : {
+			InvoiceID : invoiceid,
+			GetPaymentsForInvoice : "true"
+		}
+	}).done(function(data) {
+
+		var payments = JSON.parse(data);
+		
+		if(payments.length>0){
+		
+		var html = "<div class='paymentscontainer'><div class='paymentstablerow headerblue'><div>Paid Date</div><div>Check Number</div><div>Amount</div></div>"
+		
+		jQuery.each(payments,function(){
+			
+			var amount = this.Amount;
+			var checknumber = this.CheckNumber;
+			var paiddate = this.PaidDate
+			
+			html = html + "<div class='paymentstablerow'><div>"+paiddate+"</div><div>"+checknumber+"</div><div>"+amount+"</div></div>";
+			
+		});
+		
+		html = html+"</div>";
+		
+		$("div[data-ajax-id='paymentstable']").append(html);
+		
+		}
+
+
+	});
+	
+}
+
 function PayInvoice(invoiceid,amount,checknumber) {
 
 
@@ -1742,12 +1790,6 @@ $("#customloader").show();
 		}
 	}).done(function(data) {
 
-		//LoadInvoice(invoiceid);
-		//GetSentInvoices();
-        //GetMonthData();
-		//generateModals();
-		$("#customloader").hide();
-		//$('.invoice_paid_modal').click();
 
 	});
 }
@@ -1931,6 +1973,8 @@ function LoadInvoice(invoiceid) {
 		$("div[data-ajax-target='invoicebuttons']").append("<span style='margin-right:10px' class='link payinvoice postbuttons' data-ajax-total-amount='"+invoice.balance+"' data-invoice-id='"+invoice.invoiceID+"'>Make Payment</span>");
 		
 		}
+		
+		GetPaymentsForInvoice(invoiceid);
 
 	});
 
@@ -2419,7 +2463,8 @@ function clearForm() {
 	$(".totaltaxes").html("$0.00");
 	$(".totalsum").html("$0.00");
 	$(".expensestotal").html("$0.00");
-	
+	$("span[data-ajax-target='paymentamount']").html("$0.00");
+	$(".paymentscontainer").remove();
 	$("span[data-ajax-target='createinvoicenet']").html("$0.00");
 	
     $(".createcopydiv").hide();

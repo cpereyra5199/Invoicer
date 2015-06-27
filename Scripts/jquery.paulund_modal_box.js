@@ -151,7 +151,7 @@
 		// Default parameters
 
 		var options = $.extend({
-			height : "250",
+			height : "300",
 			width : "500",
 			title:"JQuery Modal Box Demo",
 			description: "Example of how to create a modal box.",
@@ -187,10 +187,11 @@
 		$(".yesclick").click(function(){
 			
 			var paymentamount = $("#paymentamount").val();
+			var checknumber = $("#checknumber").val();
 			
 			if(isValidNumber(paymentamount)){
 				
-			options.yescallback(options.invoiceid,$("#paymentamount").val());
+			options.yescallback(options.invoiceid,paymentamount,checknumber);
 			
 			}else{
 				
@@ -305,7 +306,7 @@
 		  */
 		 function add_popup_box(){
 			 
-			 var pop_up = $('<div class="paulund_modal_box"><a href="" onclick="return false" class="paulund_modal_close"></a><div class="paulund_inner_modal_box"><h2>' + options.title + '</h2><div><h4>Balance: '+options.totalamount+'</h4></div><p>' + options.description + '</p><div><input type="text" onkeypress="return isDecimal(event)" class="text-right" id="paymentamount"/></div><div class="confirmationbuttons"><span class="yesclick">'+options.YesText+'</span>&nbsp;<span class="noclick">'+options.NoText+'</span></div></div></div>');
+			 var pop_up = $('<div class="paulund_modal_box"><a href="" onclick="return false" class="paulund_modal_close"></a><div class="paulund_inner_modal_box"><h2>' + options.title + '</h2><div><h4>Balance: '+options.totalamount+'</h4></div><p>' + options.description + '</p><div><input type="text" onkeypress="return isDecimal(event)" class="text-right" id="paymentamount"/></div><div><input type="text" id="checknumber" placeholder="Check #"/></div><div class="confirmationbuttons"><span class="yesclick">'+options.YesText+'</span>&nbsp;<span class="noclick">'+options.NoText+'</span></div></div></div>');
 			 $(pop_up).appendTo('.paulund_block_page');
 			 			 
 			 $('.paulund_modal_close').click(function(){

@@ -229,6 +229,9 @@
 <h4>Payments&nbsp;-&nbsp;<span data-ajax-target="paymentamount">$0.00</span></h4>
 </div>
 
+<div class="pure-control-group" data-ajax-id="paymentstable">
+</div>
+
 <div class="pure-control-group">
 <h4>Balance&nbsp;-&nbsp;<span data-ajax-target="invoicebalance">$0.00</span></h4>
 </div>

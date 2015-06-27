@@ -17,6 +17,11 @@ if (isset($_GET["GetCategories"])) {
 	GetPayees();	
 	
 }
+else if (isset($_POST["GetPaymentsForInvoice"])){
+	
+	GetPayments($_POST["InvoiceID"]);
+	
+}
  else if (isset($_POST["DeleteItem"])) {
 
 	DeleteCategory($_POST["DeleteItem"]);
@@ -1137,9 +1142,36 @@ if ($invoice["EmailSent"]=="1" && $invoice["paid"]=="1"){
 						sendMail($clientemail, $settings["companyname"], $invoiceID, $settings["linkeddomain"], $settings["sendemailfrom"],"an estimate",$invoice["totalamount"]);
 					
 			}
+}
+
+function GetPayments($invoiceID){
 	
+	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+	
+	$query = "select Amount,CheckNumber,PaidDate from `payments` where InvoiceID = ".$invoiceID;
+	
+	$result = mysql_query($query);
+
+	$payments = array();
+
+	while ($row = mysql_fetch_array($result)) {
 
 	
+		$datepaid = DateTime::createFromFormat('Y-m-d H:i:s', $row["PaidDate"]);
+        $datepaid = $datepaid->format('m/d/y');
+	
+		$arr = array(
+		"CheckNumber"=>$row["CheckNumber"],
+		"Amount"=>$row["Amount"],
+		"PaidDate"=>$datepaid
+		);
+		
+		array_push($payments, $arr);
+	}
+	
+	echo(json_encode($payments));
+
 }
 
 function PayInvoice($invoiceID,$amount,$checknumber){
@@ -1148,7 +1180,7 @@ function PayInvoice($invoiceID,$amount,$checknumber){
 	mysql_select_db($GLOBALS['dbname']);
 
 	
-	$query = "insert into `payments` (InvoiceID, Amount,CheckNumber) values(".$invoiceID.",".$amount.",'".$checknumber."')";
+	$query = "insert into `payments` (InvoiceID, Amount,CheckNumber,PaidDate) values(".$invoiceID.",".$amount.",'".$checknumber."',NOW())";
 	
 	mysql_query($query);
 	
@@ -1175,7 +1207,7 @@ function PayInvoiceInBulk($invoiceID,$amount,$checknumber){
 	mysql_select_db($GLOBALS['dbname']);
 
 	
-	$query = "insert into `payments` (InvoiceID, Amount,CheckNumber) values(".$invoiceID.",".$amount.",'".$checknumber."')";
+	$query = "insert into `payments` (InvoiceID, Amount,CheckNumber,PaidDate) values(".$invoiceID.",".$amount.",'".$checknumber."',NOW())";
 	
 	mysql_query($query);
 	
@@ -1239,7 +1271,7 @@ function GetInvoicesToPayByCustomer($customID){
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
 	
-	$query = "select i.ID,(SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2))-IFNULL(p.Amount,0.00)) as Balance, i.Invoicetitle from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID and it.Expense = 0 left join `invoiceitem` expenses on expenses.InvoiceID = i.ID and expenses.Expense = 1  left join (select sum(Amount) Amount,InvoiceID from `payments` p group by p.InvoiceID) as p on p.InvoiceID = i.ID where i.CustomerID=".$customID." and Paid=0 GROUP BY i.ID order by Datetime desc, i.id desc";
+	$query = "select i.ID,(SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2))-IFNULL(p.Amount,0.00)) as Balance, i.Invoicetitle from `invoices` i inner join `invoiceitem` it on it.InvoiceID = i.ID and it.Expense = 0 left join `invoiceitem` expenses on expenses.InvoiceID = i.ID and expenses.Expense = 1  left join (select sum(Amount) Amount,InvoiceID from `payments` p group by p.InvoiceID) as p on p.InvoiceID = i.ID where i.CustomerID=".$customID." and Paid=0 AND EmailSent=1 GROUP BY i.ID order by Datetime desc, i.id desc";
 	
 	$result = mysql_query($query);
 

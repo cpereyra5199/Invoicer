@@ -129,16 +129,9 @@ text-align:right;
 
 }
 
-@media(max-width:400px){
-	
-	.invoicebuttonsdiv{
+@media(max-width:500px){
 
-overflow:auto;
-
-}
-
-	
-	.postbuttons{
+.postbuttons{
 		
 		display:inline-block;
 		width:100%;
@@ -147,6 +140,11 @@ overflow:auto;
 		
 		
 	}
+	.invoicebuttonsdiv{
+
+overflow:auto;
+
+}
 }
 
 @media(max-width:1120px){
@@ -1291,6 +1289,45 @@ background-color:lightgray;
 }
 
 .paymentcalculationrow:nth-child(even)
+{ 
+
+background-color:rgb(239, 239, 239,0);
+
+}
+.customerselect{
+
+  cursor: pointer;
+
+}
+
+.paymentstablerow{
+
+width:100%;
+overflow: auto;
+
+}
+
+.paymentstablerow div{
+
+width:33.33%;
+float:left;
+
+}
+.paymentscontainer{
+
+width:100%;
+overflow:auto;
+
+}
+
+.paymentstablerow:nth-child(odd)
+{ 
+
+background-color:lightgray; 
+
+}
+
+.paymentstablerow:nth-child(even)
 { 
 
 background-color:rgb(239, 239, 239,0);
