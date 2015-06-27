@@ -129,7 +129,7 @@ text-align:right;
 
 }
 
-@media(max-width:320px){
+@media(max-width:400px){
 	
 	.invoicebuttonsdiv{
 
@@ -1271,6 +1271,7 @@ background-color:#53BC44!important;
 
 overflow:auto;
 margin-bottom:5px;
+padding:3px;
 
 }
 
@@ -1279,5 +1280,19 @@ margin-bottom:5px;
 width:100%;
 text-align:right;
 margin:0px!important;
+
+}
+
+.paymentcalculationrow:nth-child(odd)
+{ 
+
+background-color:lightgray; 
+
+}
+
+.paymentcalculationrow:nth-child(even)
+{ 
+
+background-color:rgb(239, 239, 239,0);
 
 }

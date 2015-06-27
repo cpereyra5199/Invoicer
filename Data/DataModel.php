@@ -77,9 +77,14 @@ else if (isset($_GET["GetSettings"])) {
 
 	GetLineItems($_GET["InvoiceID"], "true","true");
 
-} else if (isset($_POST["PayInvoice"]) && isset($_POST["InvoiceID"])){
+} else if (isset($_POST["PayInvoice"]) && isset($_POST["InvoiceID"]) && isset($_POST["CheckNumber"])){
 	
-	PayInvoice($_POST["InvoiceID"],$_POST["Amount"]);
+	PayInvoice($_POST["InvoiceID"],$_POST["Amount"],$_POST["CheckNumber"]);
+}
+else if (isset($_POST["PayInvoice"]) && isset($_POST["InvoiceID"]) && isset($_POST["CheckNumber"]) && isset($_POST["Bulk"])){
+	
+	PayInvoiceInBulk($_POST["InvoiceID"],$_POST["Amount"],$_POST["CheckNumber"]);
+	
 }
 else if (isset($_GET["GetHomPageData"])){
 	
@@ -1137,17 +1142,44 @@ if ($invoice["EmailSent"]=="1" && $invoice["paid"]=="1"){
 	
 }
 
-function PayInvoice($invoiceID,$amount){
+function PayInvoice($invoiceID,$amount,$checknumber){
 		
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
 
 	
-	$query = "insert into `payments` (InvoiceID, Amount) values(".$invoiceID.",".$amount.")";
+	$query = "insert into `payments` (InvoiceID, Amount,CheckNumber) values(".$invoiceID.",".$amount.",'".$checknumber."')";
 	
 	mysql_query($query);
 	
-	$query = "select SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2)) as TotalAmount, p.Amount AmountPaid from `invoices` i left join `invoiceitem` it on it.InvoiceID = i.ID left join (select sum(Amount) Amount,InvoiceID from `payments` p group by p.InvoiceID) as p on p.InvoiceID = i.ID where i.ID=".$invoiceID;
+	$query = "select SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2)) as TotalAmount, p.Amount AmountPaid from `invoices` i left join `invoiceitem` it on it.InvoiceID = i.ID AND it.Expense = 0 left join (select sum(Amount) Amount,InvoiceID from `payments` p group by p.InvoiceID) as p on p.InvoiceID = i.ID where i.ID=".$invoiceID;
+	
+	$result = mysql_query($query);
+	
+	$totalamount = mysql_result($result,0,"TotalAmount");
+	$totalpaid = mysql_result($result,0,"AmountPaid");
+	
+	if($totalpaid>=$totalamount){
+		
+	$query = "update `invoices` Set Paid=1, PaidDate=NOW() where ID =" . $invoiceID;
+
+	mysql_query($query);
+		
+	}
+
+}
+
+function PayInvoiceInBulk($invoiceID,$amount,$checknumber){
+		
+	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+
+	
+	$query = "insert into `payments` (InvoiceID, Amount,CheckNumber) values(".$invoiceID.",".$amount.",'".$checknumber."')";
+	
+	mysql_query($query);
+	
+	$query = "select SUM(ROUND(IF(it.Taxable = true, (it.ItemTotal*it.ItemQuantity)+((it.ItemTotal*it.ItemQuantity)*(it.Rate/100)), it.ItemTotal*it.ItemQuantity),2)) as TotalAmount, p.Amount AmountPaid from `invoices` i left join `invoiceitem` it on it.InvoiceID = i.ID AND it.Expense = 0 left join (select sum(Amount) Amount,InvoiceID from `payments` p group by p.InvoiceID) as p on p.InvoiceID = i.ID where i.ID=".$invoiceID;
 	
 	$result = mysql_query($query);
 	

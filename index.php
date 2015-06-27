@@ -359,6 +359,8 @@
 <span class="delete_estimate_modal"></span>
 <span class="delete_complete"></span>
 <span class="save_payee_modal"></span>
+<span class="bulk_payments_complete"></span>
+
 
 
 
