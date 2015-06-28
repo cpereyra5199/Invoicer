@@ -36,6 +36,35 @@ $(document).ready(function() {
  
  });
  
+ $(document).on("click","button[data-ajax-id='deletepayment']",function(e){
+	 
+	 e.preventDefault();
+	 
+	 $("html, body").animate({
+				scrollTop : 0
+			}, "slow");
+	 
+	 var paymentid = $(this).attr("data-ajax-payment-id");
+	 var ispaidoff = $(this).attr("data-ajax-paid-off");
+	 var invoiceid = $(this).attr("data-ajax-invoice-id");
+	 
+	 $('.confirm_payment_delete').paulund_modal_box_confirm({
+
+		title : 'Delete Payment '+paymentid+'?',
+		description : 'Are you sure you would like to delete payment '+paymentid+'?',
+		yescallback:DeletePayment,
+		paymentid:paymentid,
+		ispaidoff:ispaidoff,
+		invoiceid:invoiceid
+
+		});
+		
+		$('.confirm_payment_delete').click();
+
+	 
+	 
+ })
+ 
  
  $(document).on("click",'button[data-ajax-id="paybulk"]',function(){
 
@@ -530,7 +559,7 @@ e.preventDefault();
 		var invoiceid = $(this).attr("data-invoice-id");
 		var totalamount = $(this).attr("data-ajax-total-amount");
 		
-		$('.payInvoice_modal').paulund_modal_box_confirm({
+		$('.payInvoice_modal').paulund_modal_box_confirmPayment({
 
 		title : 'Enter Payment',
 		description : 'Please enter payment amount',
@@ -1694,7 +1723,7 @@ function ResendInvoice(invoiceid) {
 
 }
 
-function GetPaymentsForInvoice(invoiceid){
+function GetPaymentsForInvoice(invoiceid,paidoff){
 	
 	
 	$(".paymentscontainer").remove();
@@ -1713,7 +1742,7 @@ function GetPaymentsForInvoice(invoiceid){
 		
 		if(payments.length>0){
 		
-		var html = "<div class='paymentscontainer'><div class='paymentstablerow headerblue'><div>Paid Date</div><div>Check Number</div><div>Amount</div></div>"
+		var html = "<div class='paymentscontainer'><div class='paymentstablerow headerblue'><div>Paid Date</div><div>Check Number</div><div>Amount</div><div>Action</div></div>"
 		
 		jQuery.each(payments,function(){
 			
@@ -1721,7 +1750,7 @@ function GetPaymentsForInvoice(invoiceid){
 			var checknumber = this.CheckNumber;
 			var paiddate = this.PaidDate
 			
-			html = html + "<div class='paymentstablerow'><div>"+paiddate+"</div><div>"+checknumber+"</div><div>"+amount+"</div></div>";
+			html = html + "<div class='paymentstablerow'><div>"+paiddate+"</div><div>"+checknumber+"</div><div>"+amount+"</div><div><button class='pure-button pure-button-primary' style='padding:0px!important' data-ajax-invoice-id='"+invoiceid+"' data-ajax-id='deletepayment' data-ajax-payment-id='"+this.ID+"' data-ajax-paid-off='"+paidoff+"'>Delete</button></div></div>";
 			
 		});
 		
@@ -1793,6 +1822,27 @@ $("#customloader").show();
 
 	});
 }
+}
+
+function DeletePayment(paymentid,ispaidoff,invoiceid){
+	
+	 $.ajax({
+		type : "POST",
+		cache : false,
+		url : "Data/DataModel.php",
+		data : {
+			PaymentID : paymentid,
+			IsPaidOff : ispaidoff,
+			InvoiceID:invoiceid
+		}
+	}).done(function(data) {
+
+		$(".paulund_block_page").remove();
+        LoadInvoice(invoiceid);
+
+	});
+	
+	
 }
 
 function DeleteInvoice(invoiceid){
@@ -1974,7 +2024,15 @@ function LoadInvoice(invoiceid) {
 		
 		}
 		
-		GetPaymentsForInvoice(invoiceid);
+		var paidoff = false;
+		
+		if(Number(invoice.balance) == 0){
+			
+			paidoff = true;
+			
+		}
+		
+		GetPaymentsForInvoice(invoiceid,paidoff);
 
 	});
 
@@ -2431,6 +2489,8 @@ function generateModals() {
 		description:"Payments have been made for all referenced invoices."
 		
 	});
+	
+	$('.confirm_payment_delete').paulun
     
 
 

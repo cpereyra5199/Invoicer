@@ -150,7 +150,7 @@
 <form name="invoiceform" class="invoice">
 <div>
 
-<h3>CREATE DOCUMENT</h3>
+<h3>DOCUMENT</h3>
 <input type="hidden" name="invoiceid" />
 <input type="hidden" class="clientid" name="customerid" />
 <div class="invoiceidlabel" style="display:none">Document # - <span class="invoideIDlabelval"></span></div>
@@ -363,6 +363,7 @@
 <span class="delete_complete"></span>
 <span class="save_payee_modal"></span>
 <span class="bulk_payments_complete"></span>
+<span class="confirm_payment_delete"></span>
 
 
 

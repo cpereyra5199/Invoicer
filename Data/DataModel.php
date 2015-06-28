@@ -7,8 +7,13 @@ $username = "invoicemanager";
 $password = "Maxipereyra!2";
 $dbname = "invoicemanagement";
 
+if (isset($_POST["PaymentID"]) && isset($_POST["IsPaidOff"]) && isset($_POST["InvoiceID"])){
+	
+	DeletePayment($_POST["PaymentID"],$_POST["IsPaidOff"],$_POST["InvoiceID"]);
+	
+}
 
-if (isset($_GET["GetCategories"])) {
+else if (isset($_GET["GetCategories"])) {
 
 	GetCategories();
 
@@ -149,6 +154,23 @@ else if (isset($_GET["GetHomPageData"])){
 }else if(isset($_GET["CustomerInvoicePaymentIDs"])){
 	
 	GetInvoicesToPayByCustomer($_GET["CustomerInvoicePaymentIDs"]);
+	
+}
+
+function DeletePayment($paymentid, $ispaidoff,$invoiceid){
+	
+	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
+	mysql_select_db($GLOBALS['dbname']);
+    
+    $query = "DELETE from `payments` where ID=".$paymentid;
+    $result = mysql_query($query);
+    
+	if($ispaidoff=="true"){
+		
+	$query = "update `invoices` set paiddate = 0, paid=0 where ID=".$invoiceid;
+    $result = mysql_query($query);
+		
+	}
 	
 }
 
@@ -1149,7 +1171,7 @@ function GetPayments($invoiceID){
 	mysql_connect($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password']) OR DIE("Unable to connect to database! Please try again later.");
 	mysql_select_db($GLOBALS['dbname']);
 	
-	$query = "select Amount,CheckNumber,PaidDate from `payments` where InvoiceID = ".$invoiceID;
+	$query = "select ID,Amount,CheckNumber,PaidDate from `payments` where InvoiceID = ".$invoiceID;
 	
 	$result = mysql_query($query);
 
@@ -1162,6 +1184,7 @@ function GetPayments($invoiceID){
         $datepaid = $datepaid->format('m/d/y');
 	
 		$arr = array(
+		"ID"=>$row["ID"],
 		"CheckNumber"=>$row["CheckNumber"],
 		"Amount"=>$row["Amount"],
 		"PaidDate"=>$datepaid
