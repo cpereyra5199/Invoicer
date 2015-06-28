@@ -534,7 +534,7 @@ e.preventDefault();
 
 		var invoiceid = $(this).attr("data-invoice-id");
 
-		LoadInvoice($invoiceid);
+		LoadInvoice(invoiceid);
 		
 		
 
@@ -543,9 +543,9 @@ e.preventDefault();
 	$(document).on("click", ".resendinvoice", function() {
 
 		$("#customloader").show();
-		$invoiceid = $(this).attr("data-invoice-id");
+		var invoiceid = $(this).attr("data-invoice-id");
 
-		ResendInvoice($invoiceid);
+		ResendInvoice(invoiceid);
 
 	});
 	
@@ -1079,7 +1079,7 @@ function calculateTotal() {
 	$(".totaltaxes").html("$" + totaltax.toFixed(2));
 	$(".subtotalsum").html("$" + subtotal.toFixed(2));
 	$(".expensestotal").html("$" + expensesum.toFixed(2));
-	$("span[data-ajax-target='createinvoicenet']").html("$"+ Number(subtotal-expensesum).toFixed(2));
+	$("span[data-ajax-target='createinvoicenet']").html("$"+ Number(sum-expensesum).toFixed(2));
 	
 }
 
@@ -2673,7 +2673,7 @@ function ResizeText(){
 	
 }
 
-function LoadHomePageData($date){
+function LoadHomePageData(date){
 
 
 
@@ -2685,19 +2685,12 @@ function LoadHomePageData($date){
 		cache : false,
 		url : "Data/DataModel.php",
 		data : {
-			GetHomPageData : "true",Date:$date
+			GetHomPageData : "true",Date:date
 		}
 	}).done(function(data) {
 	
 		
 		var data = JSON.parse(data);
-
-
-		//"totalunpaid" => $totalunpaid,
-		//"totalpaid" => $totalpaid,
-		//"totalestimates" => $totalestimates, 
-		//"invoicetotal" => $totalinvoice, 
-		//"totalexpired" => $totalexpired
 
 		var totalpending = data.totalunpaid;
 		

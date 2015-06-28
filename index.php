@@ -252,7 +252,7 @@
 
 
 <div style="margin:20px" class="invoicebuttonsdiv" data-ajax-target="invoicebuttons">
-<span style="margin-right:10px" class="link saveinvoicebtn postbuttons">Save Estimate</span>
+<span style="margin-right:10px" class="link saveinvoicebtn postbuttons">Save</span>
 <span style="margin-right:10px" class="link generateinvoicebtn postbuttons">Generate Invoice</span>
 <span style="margin-right:10px" class="link  postbuttons" onclick="clearForm()">Clear</span>
 </div>
